@@ -12,6 +12,21 @@ Projet de test pour enchaîner plusieurs skills sur une même idée d'appli.
 | 2. Identité et direction artistique | `direction-artistique` | [docs/direction/necess-direction-artistique.md](docs/direction/necess-direction-artistique.md) · [planche](docs/direction/planche-direction.png) |
 | 3. Interface codée | `material-design` | [app/](app/) · [docs/material/necess-material.md](docs/material/necess-material.md) |
 
+## Voir l'app en ligne
+
+- Avec des exemples fictifs : https://noxheathcliff-arch.github.io/Repo-de-test-1/?demo
+- Vide, pour ton usage réel : https://noxheathcliff-arch.github.io/Repo-de-test-1/
+
+Le site est servi depuis la branche `gh-pages`, qui contient le dossier `app/`. Pour publier une mise à jour :
+
+```bash
+git subtree split --prefix app -b gh-pages
+```
+
+```bash
+git push origin gh-pages
+```
+
 ## Lancer l'app
 
 L'app tient dans `app/`, sans dépendance ni étape de build. Il faut la servir en HTTP : le service worker ne fonctionne pas en `file://`.
