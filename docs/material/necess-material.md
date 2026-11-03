@@ -3,16 +3,42 @@
 > Produit avec le skill **material-design**, à partir de `docs/necess-essentiel-ux.md` et de `docs/direction/necess-direction-artistique.md`.
 > Le code est dans `app/`. Captures : `docs/captures/`.
 
+## Version 2 : pourquoi l'interface a été refaite
+
+La v1 reprenait la planche de la direction artistique comme si c'était une maquette. Cette planche ne servait qu'à montrer les couleurs. Ce qui ne marchait pas dans la v1 :
+
+- **Trop de masse en haut** : un bandeau ardoise et des onglets de 26 px concurrençaient le contenu.
+- **Les mauvais points focaux** : les éléments les plus forts de l'écran étaient des cases noires de 40 px, pas les produits.
+- **Une action principale trop lourde** : une barre vermillon pleine largeur.
+- **Une fiche sans hiérarchie** : entièrement en ardoise, tout y avait le même poids.
+
+La v2 garde la direction artistique (couleurs, polices, idée de la contre-étiquette) et refait la structure selon les règles de Material :
+
+- **Grand titre** de page (app bar « medium flexible »), qui se réduit au défilement, avec un indicateur de progression des produits pris.
+- **Liste segmentée** : éléments séparés de 2 px, groupe arrondi, miniature de 64 px. La case à cocher suit le standard Material : 18 px, dans une cible de 48 px.
+- **Section « Déjà pris »** séparée et atténuée. La liste montre d'abord ce qu'il reste à prendre.
+- **Nécessaire en grille de cartes photo**, puisque la mémoire du persona est visuelle. On y trouve une barre de recherche et des filtres (à compléter, catégories, tri).
+- **Barre d'outils flottante et FAB** en bas, dans la zone du pouce. Il n'y a que 2 destinations, alors que la navigation bar Material en demande 3 à 5 : la barre d'outils flottante est donc utilisée comme navigation locale.
+- **Fiche produit** dans cet ordre :
+  - grande photo ;
+  - nom ;
+  - attributs (contenance, catégorie, rachat) ;
+  - action principale « Je l'ai pris » ;
+  - carte prix, avec le prix en grand et l'écart signalé ;
+  - **contre-étiquette en carte ardoise**, ce qui garde la signature de la DA, désormais sous forme d'objet contenu ;
+  - historique.
+- **Forme passée de « nette » à « douce »** : 8, 12 et 16 px, et 28 px pour les dialogs. Les coins de 4 px partout rendaient l'interface dure. Les formes pleines sont réservées à la barre d'outils, aux boutons et à la recherche.
+
 ## Direction visuelle en 6 décisions
 
-| Décision | Choix | Raison |
-|---|---|---|
-| Couleur | Schéma **statique**, sans couleur dynamique. Source `primary` vermillon `#C2401A`, `secondary` ardoise `#2B3640`, neutres bleu-gris `#F2F4F5` / `#12171B`, `error` carmin `#B3122E`. | Les photos des produits apportent la couleur ; l'interface reste un support neutre. |
-| Typo | `brand` = IBM Plex Sans Condensed (titres, noms, données en chiffres tabulaires) ; `plain` = Atkinson Hyperlegible Next (texte, actions). Polices servies localement. | Voix de l'étiquette contre voix lisible en rayon ; fonctionne hors ligne. |
-| Forme | Net : 4 px partout, 0 pour les surfaces pleine largeur, aucune pilule. | Coins d'étiquette autocollante. |
-| Profondeur | Plat contour : filets, tonalité. Ombres seulement pour le menu et la snackbar ; scrim sous les dialogs. | Les filets suffisent et laissent la place aux photos. |
-| Mouvement | Scheme `standard`. Un seul moment chorégraphié : le **retournement** (View Transitions, environ 300 ms, `emphasized decelerate`), fondu de 100 ms en mouvement réduit. | Le verso est le même produit vu de dos. |
-| Densité | Liste confortable (lignes ≥ 104 px, photo 88 px) ; verso compact (lignes ≥ 48 px). Densité jamais réduite automatiquement. | Une main en rayon ; contre-étiquette dense par nature. |
+| Décision | Choix |
+|---|---|
+| Couleur | Schéma statique. `primary` vermillon pour le FAB et l'action « Je l'ai pris » ; `secondary` ardoise pour les cases cochées, la section active, la progression et la contre-étiquette ; neutres bleu-gris. Couleurs d'erreur en carmin. Pas de couleur dynamique. |
+| Typo | Plex Sans Condensed pour les titres, les noms et les chiffres ; Atkinson Hyperlegible Next pour le texte et les actions. |
+| Forme | Douce : miniatures de 12 px, cartes et groupes de 16 px, dialogs de 28 px, formes pleines pour la barre d'outils, les boutons et la recherche. |
+| Profondeur | Plat tonal : les surfaces se séparent par niveaux de `surface-container`. Des ombres uniquement sur ce qui flotte (barre d'outils, FAB, menu, snackbar, dialog). |
+| Mouvement | Standard. Un seul moment chorégraphié : la miniature devient la photo de la fiche (container transform, 400 ms, emphasized decelerate). |
+| Densité | Confortable : éléments de liste d'au moins 88 px ; cibles de 48 px partout. |
 
 ## Tokens
 

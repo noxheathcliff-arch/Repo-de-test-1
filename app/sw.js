@@ -1,5 +1,5 @@
 // Necess : fonctionne sans réseau en magasin (B21). Cache de l'application, réseau en secours.
-const CACHE = 'necess-v1';
+const CACHE = 'necess-v2';
 const SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'icon.svg',
   'fonts/atkinson-next-var.woff2', 'fonts/plex-condensed-400.woff2', 'fonts/plex-condensed-600.woff2'];
 

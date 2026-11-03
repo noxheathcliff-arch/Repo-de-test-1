@@ -44,6 +44,7 @@ const state = {
   openId: null,
   query: '',
   onlyIncomplete: false,
+  category: null,
   sort: 'name',
 };
 const photoUrls = new Map(); // id → objectURL
@@ -152,77 +153,93 @@ async function compressPhoto(file) {
 }
 
 /* ============================================================
-   Rendu : rectos
+   Rendu
    ============================================================ */
 const $ = sel => document.querySelector(sel);
 const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
+const initials = p => (p.name || '?').split(/\s+/).filter(w => w.length > 2 || /^[A-ZÀ-Ý]/.test(w)).slice(0, 2).map(w => w[0]).join('').toUpperCase() || (p.name || '?')[0].toUpperCase();
 
-function rectoHtml(p, extraClass = '') {
+function thumbHtml(p, cls = 'thumb') {
   const url = photoUrl(p);
-  // L'image est dans un bouton qui porte déjà le nom : alt vide pour éviter la répétition.
+  // Dans un bouton qui porte déjà le nom : alt vide pour éviter la répétition.
   return url
-    ? `<span class="recto ${extraClass}"><img src="${url}" alt="" loading="lazy" decoding="async"></span>`
-    : `<span class="recto recto-text ${extraClass}" aria-hidden="true">${esc(displayName(p))}</span>`;
+    ? `<span class="${cls}" data-vt="${p.id}"><img src="${url}" alt="" loading="lazy" decoding="async"></span>`
+    : `<span class="${cls} thumb-text" data-vt="${p.id}" aria-hidden="true">${esc(initials(p))}</span>`;
 }
 
-function dataLine(p, { inList } = {}) {
-  const parts = [];
-  if (p.brand) parts.push(esc(p.brand));
-  if (p.size) parts.push(sizeText(p));
-  if (inList && p.qty > 1) parts.push(`×${p.qty}`);
-  if (p.usualPrice != null) parts.push(euro(p.usualPrice));
-  return parts.join(' · ');
+function subLine(p) {
+  return [p.brand && esc(p.brand), sizeText(p)].filter(Boolean).join(' · ');
+}
+
+function itemHtml(p) {
+  const missing = missingFields(p).filter(f => f !== 'le prix');
+  const sub = subLine(p);
+  return `
+    <li class="item${state.openId === p.id ? ' is-open' : ''}" data-id="${p.id}">
+      <button class="item-main sl" data-open="${p.id}">
+        ${thumbHtml(p)}
+        <span class="item-text">
+          <span class="item-name">${esc(displayName(p))}</span>
+          ${sub ? `<span class="item-sub">${sub}</span>` : ''}
+          <span class="item-meta">
+            ${p.usualPrice != null ? `<span class="price">${euro(p.usualPrice)}</span>` : ''}
+            ${p.qty > 1 ? `<span class="tag">×${p.qty}</span>` : ''}
+            ${missing.length && !p.bought ? `<span class="tag tag-outline">à compléter</span>` : ''}
+          </span>
+        </span>
+      </button>
+      <label class="cb">
+        <input type="checkbox" data-check="${p.id}" ${p.bought ? 'checked' : ''} aria-label="${p.bought ? 'Pris' : 'Marquer comme pris'} : ${esc(displayName(p))}">
+        <span class="cb-box" aria-hidden="true"><svg class="ic"><use href="#i-check"/></svg></span>
+      </label>
+    </li>`;
 }
 
 function renderListe() {
   const items = listItems();
-  const rows = $('#liste-rows');
-  const empty = $('#liste-empty');
-  const left = items.filter(p => !p.bought).length;
-  const bought = items.length - left;
+  const todo = items.filter(p => !p.bought);
+  const done = items.filter(p => p.bought);
 
   const status = $('#liste-status');
-  if (!items.length) status.textContent = '';
-  else if (!left) status.innerHTML = '<strong>Tout est pris.</strong> Tu peux retirer les produits achetés.';
-  else status.innerHTML = `<strong>${left} sur ${items.length}</strong> ${left > 1 ? 'restent' : 'reste'} à prendre`;
+  const prog = $('#liste-progress');
+  if (!items.length) { status.textContent = state.products.length ? 'Rien à racheter pour l\'instant.' : ''; prog.hidden = true; }
+  else {
+    status.innerHTML = todo.length
+      ? `<strong>${todo.length}</strong> ${todo.length > 1 ? 'produits restent' : 'produit reste'} à prendre sur ${items.length}`
+      : '<strong>Tout est pris.</strong> Bonne fin de course.';
+    prog.hidden = false;
+    const pct = Math.round(done.length / items.length * 100);
+    prog.style.setProperty('--p', `calc(${pct}% - ${pct > 0 && pct < 100 ? 2 : 0}px)`);
+    prog.setAttribute('aria-valuemax', String(items.length));
+    prog.setAttribute('aria-valuenow', String(done.length));
+    prog.setAttribute('aria-valuetext', `${done.length} sur ${items.length} pris`);
+    prog.toggleAttribute('data-full', pct === 100);
+    prog.toggleAttribute('data-empty', pct === 0);
+  }
+  $('#badge-liste').textContent = todo.length ? String(todo.length) : '';
+  $('#tab-liste').setAttribute('aria-label', todo.length ? `À racheter, ${todo.length} restant${todo.length > 1 ? 's' : ''}` : 'À racheter');
 
-  rows.replaceChildren(...items.map(p => {
-    const missing = missingFields(p).filter(f => f !== 'le prix');
-    const li = el(`
-      <li class="row${p.bought ? ' is-bought' : ''}${state.openId === p.id ? ' is-open' : ''}" data-id="${p.id}">
-        <button class="row-main" data-open="${p.id}" aria-describedby="d-${p.id}">
-          ${rectoHtml(p)}
-          <span class="row-text">
-            <span class="row-name">${esc(displayName(p))}</span>
-            <span class="row-data" id="d-${p.id}">${dataLine(p, { inList: true })}${missing.length ? `<span class="row-flag">à compléter</span>` : ''}${p.bought ? '<span class="visually-hidden">, acheté</span>' : ''}</span>
-          </span>
-        </button>
-        <span class="row-trail">
-          <label class="check">
-            <input type="checkbox" data-check="${p.id}" ${p.bought ? 'checked' : ''} aria-label="Marquer « ${esc(displayName(p))} » comme acheté">
-            <span class="check-box" aria-hidden="true"><svg class="ic"><use href="#i-check"/></svg></span>
-          </label>
-        </span>
-      </li>`);
-    return li;
-  }));
+  $('#todo-rows').replaceChildren(...todo.map(p => el(itemHtml(p))));
+  $('#todo-rows').hidden = !todo.length;
+  $('#done-rows').replaceChildren(...done.map(p => el(itemHtml(p))));
+  $('#done-section').hidden = !done.length;
+  $('#close-trip-btn').textContent = done.length > 1 ? `Retirer les ${done.length}` : 'Retirer de la liste';
+  $('#close-trip-btn').setAttribute('aria-label', done.length > 1 ? `Retirer les ${done.length} produits pris de la liste` : 'Retirer le produit pris de la liste');
 
+  const empty = $('#liste-empty');
   empty.hidden = items.length > 0;
   if (!items.length) {
     empty.innerHTML = state.products.length
-      ? `<h2 class="empty-title">Rien à racheter.</h2><p>Ton nécessaire est complet.</p>`
-      : `<h2 class="empty-title">Ton nécessaire est vide.</h2><p>Ajoute un premier produit à racheter : un nom suffit, la photo peut attendre.</p>`;
+      ? `<h2 class="empty-title">Ton nécessaire est complet.</h2><p>Quand un produit se termine, remets-le dans la liste depuis ton nécessaire, ou ajoute-le.</p><button class="btn btn-tonal" data-goto="necessaire">Ouvrir ton nécessaire</button>`
+      : `<h2 class="empty-title">Ta liste est vide.</h2><p>Ajoute un premier produit à racheter. Un nom suffit, la photo peut attendre.</p>`;
   }
-  const close = $('#close-trip');
-  close.hidden = bought === 0;
-  $('#close-trip-btn').textContent = bought === 1 ? 'Retirer le produit acheté' : `Retirer les ${bought} produits achetés`;
 }
 
 function matchesQuery(p, q) {
   if (!q) return true;
   const hay = norm([p.name, p.brand, p.category, p.note].join(' '));
   const words = norm(q).split(' ').filter(Boolean);
-  // Tolérance légère : chaque mot doit apparaître, ou à une lettre près pour les mots de 5 lettres et plus.
+  // Tolérance : chaque mot doit apparaître, ou à une faute près pour les mots de 5 lettres et plus.
   return words.every(w => hay.includes(w) || (w.length >= 5 && hay.split(' ').some(h => nearlyEqual(h, w))));
 }
 function nearlyEqual(a, b) {
@@ -240,41 +257,54 @@ function nearlyEqual(a, b) {
   return edits + (a.length - i) + (b.length - j) <= 1;
 }
 
-function renderNecessaire() {
-  const incompleteCount = state.products.filter(p => missingFields(p).length).length;
-  const chip = $('#filter-incomplete');
-  chip.textContent = `À compléter (${incompleteCount})`;
-  chip.setAttribute('aria-pressed', String(state.onlyIncomplete));
+function renderChips() {
+  const incomplete = state.products.filter(p => missingFields(p).length).length;
+  const cats = [...new Set(state.products.map(p => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+  if (state.category && !cats.includes(state.category)) state.category = null;
+  const chip = (label, pressed, attrs) => `<button class="chip sl" aria-pressed="${pressed}" ${attrs}>${pressed ? '<svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>' : ''}${label}</button>`;
+  $('#chips').innerHTML = [
+    `<label class="chip chip-select sl"><svg class="ic" aria-hidden="true"><use href="#i-sort"/></svg><span class="visually-hidden">Trier</span>
+      <select id="sort" class="chip-select" style="border:0;background:none;font:inherit;color:inherit;min-height:30px">
+        <option value="name" ${state.sort === 'name' ? 'selected' : ''}>Par nom</option>
+        <option value="last" ${state.sort === 'last' ? 'selected' : ''}>Dernier acheté</option>
+        <option value="freq" ${state.sort === 'freq' ? 'selected' : ''}>Les plus rachetés</option>
+      </select></label>`,
+    incomplete ? chip(`À compléter (${incomplete})`, state.onlyIncomplete, 'data-filter="incomplete"') : '',
+    ...cats.map(c => chip(esc(c), state.category === c, `data-cat="${esc(c)}"`)),
+  ].join('');
+}
 
-  let items = state.products.filter(p => matchesQuery(p, state.query) && (!state.onlyIncomplete || missingFields(p).length));
+function renderNecessaire() {
+  renderChips();
+  if (!state.products.some(p => missingFields(p).length)) state.onlyIncomplete = false;
+  let items = state.products.filter(p => matchesQuery(p, state.query)
+    && (!state.onlyIncomplete || missingFields(p).length)
+    && (!state.category || p.category === state.category));
   const last = p => p.history.at(-1)?.date ?? 0;
   if (state.sort === 'last') items.sort((a, b) => last(b) - last(a));
   else if (state.sort === 'freq') items.sort((a, b) => b.history.length - a.history.length || last(b) - last(a));
   else items.sort((a, b) => norm(displayName(a)).localeCompare(norm(displayName(b)), 'fr'));
 
-  const status = $('#nec-status');
   const n = state.products.length;
-  status.textContent = !n ? '' : state.query || state.onlyIncomplete
-    ? `${items.length} produit${items.length > 1 ? 's' : ''} sur ${n}`
-    : `${n} produit${n > 1 ? 's' : ''}`;
+  const filtered = state.query || state.onlyIncomplete || state.category;
+  $('#nec-status').textContent = !n ? '' : filtered
+    ? `${items.length} sur ${n} produit${n > 1 ? 's' : ''}`
+    : `${n} produit${n > 1 ? 's' : ''} que tu rachètes`;
 
-  $('#nec-rows').replaceChildren(...items.map(p => {
-    const missing = missingFields(p);
+  $('#nec-grid').replaceChildren(...items.map(p => {
+    const sub = subLine(p) || (missingFields(p).length ? 'Fiche à compléter' : '');
     return el(`
-      <li class="row${state.openId === p.id ? ' is-open' : ''}" data-id="${p.id}">
-        <button class="row-main" data-open="${p.id}">
-          ${rectoHtml(p)}
-          <span class="row-text">
-            <span class="row-name">${esc(displayName(p))}</span>
-            <span class="row-data">${dataLine(p)}</span>
-            ${missing.length ? `<span class="row-flag">Il manque ${esc(joinFr(missing))}</span>` : ''}
+      <li class="card" data-id="${p.id}">
+        <button class="card-main sl" data-open="${p.id}">
+          ${thumbHtml(p, 'card-media')}
+          <span class="card-body">
+            <span class="card-name">${esc(displayName(p))}</span>
+            ${sub ? `<span class="card-sub">${sub}</span>` : ''}
           </span>
         </button>
-        <span class="row-trail">
-          ${p.inList
-            ? `<span class="in-list-flag"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>Dans la liste</span>`
-            : `<button class="icon-btn" data-relist="${p.id}" aria-label="Remettre « ${esc(displayName(p))} » dans la liste"><svg class="ic"><use href="#i-list-add"/></svg></button>`}
-        </span>
+        ${p.inList
+          ? `<span class="tag card-flag"><svg class="ic ic-sm" aria-hidden="true"><use href="#i-check"/></svg>Dans la liste</span>`
+          : `<button class="card-add" data-relist="${p.id}" aria-label="Remettre « ${esc(displayName(p))} » dans la liste"><span class="bubble"><svg class="ic"><use href="#i-plus"/></svg></span></button>`}
       </li>`);
   }));
 
@@ -282,83 +312,99 @@ function renderNecessaire() {
   empty.hidden = items.length > 0;
   if (!items.length) {
     empty.innerHTML = !n
-      ? `<h2 class="empty-title">Ton nécessaire est vide.</h2><p>Chaque produit que tu ajoutes y reste, pour le remettre dans la liste en un geste.</p>`
+      ? `<h2 class="empty-title">Ton nécessaire est vide.</h2><p>Chaque produit ajouté y reste. Tu pourras le remettre dans la liste en un geste.</p>`
       : state.query
-        ? `<h2 class="empty-title">Aucun produit « ${esc(state.query)} » dans ton nécessaire.</h2><p><button class="btn btn-tonal" data-create="${esc(state.query)}">Le créer</button></p>`
-        : `<h2 class="empty-title">Toutes tes fiches sont complètes.</h2>`;
+        ? `<h2 class="empty-title">Aucun produit « ${esc(state.query)} ».</h2><p>Il n'est pas encore dans ton nécessaire.</p><button class="btn btn-tonal" data-create="${esc(state.query)}"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Le créer</button>`
+        : `<h2 class="empty-title">Aucun produit avec ces filtres.</h2>`;
   }
 }
 
-/* ============================================================
-   Rendu : le verso (contre-étiquette)
-   ============================================================ */
-function lineHtml({ key, label, value, missing, icon = '', disabled = false, aria }) {
-  return `<li><button class="line" ${disabled ? 'disabled' : `data-edit="${key}"`} ${aria ? `aria-label="${esc(aria)}"` : ''}>
+/* ---------- Fiche produit ---------- */
+function lineHtml({ key, label, value, missing, icon = '', aria }) {
+  return `<li><button class="line sl" data-edit="${key}" aria-label="${esc(aria || `${label}, ${missing ? 'à compléter' : value.replace(/<[^>]+>/g, '')}. Modifier`)}">
     <span class="line-label">${icon}${label}</span>
-    <span class="line-value${missing ? ' is-missing' : ''}">${missing ? '' : value}</span>
+    <span class="line-value${missing ? ' is-missing' : ''}">${missing ? 'à compléter' : value}<svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></span>
   </button></li>`;
 }
 
 function renderVerso() {
   const pane = $('#verso');
   const p = byId(state.openId);
-  if (!p) { pane.hidden = true; pane.innerHTML = ''; document.body.classList.remove('verso-open'); return; }
+  document.body.classList.toggle('detail-open', !!p);
+  if (!p) { pane.hidden = true; pane.innerHTML = ''; return; }
   pane.hidden = false;
-  document.body.classList.toggle('verso-open', true);
 
   const url = photoUrl(p);
+  const name = displayName(p);
   const gap = priceGap(p);
   const rebuy = rebuyText(p);
-  const lastBuy = p.history.at(-1);
-  const name = displayName(p);
-  const sizeAria = p.size ? `Contenance, ${String(p.size).replace('.', ',')} ${{ ml: 'millilitres', g: 'grammes', unités: 'unités', cl: 'centilitres', l: 'litres', kg: 'kilos' }[p.unit] || p.unit}. Modifier` : 'Contenance, à compléter';
-
-  const seenValue = p.seen
-    ? `${gap && gap.sign !== 0 ? `<span class="ecart">${gap.text}</span> · ` : ''}${euro(p.seen.price)}`
-    : '';
-  const seenLabel = p.seen ? `Vu en magasin · ${dateShort(p.seen.date)}` : 'Vu en magasin';
   const usualLabel = p.usualPrice != null && p.usualSince && isOld(p.usualSince) ? `Prix de ${monthYear(p.usualSince)}` : 'Prix habituel';
+  const unitWord = { ml: 'millilitres', g: 'grammes', unités: 'unités', cl: 'centilitres', l: 'litres', kg: 'kilos' }[p.unit] || p.unit;
+
+  let actions;
+  if (p.inList && !p.bought) actions = `<button class="btn btn-filled btn-lg" data-buy="${p.id}"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Je l'ai pris</button>
+    <button class="btn btn-outlined" data-toggle-list="${p.id}">Retirer de la liste</button>`;
+  else if (p.inList) actions = `<button class="btn btn-tonal btn-lg" data-unbuy="${p.id}">Pas encore pris, finalement</button>`;
+  else actions = `<button class="btn btn-filled btn-lg" data-toggle-list="${p.id}"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Remettre dans la liste</button>`;
 
   pane.innerHTML = `
-    <div class="verso-bar">
-      <button class="icon-btn on-secondary" id="verso-back" aria-label="Retour"><svg class="ic"><use href="#i-back"/></svg></button>
-      <span class="verso-bar-title">${p.inList ? 'Dans la liste à racheter' : 'Dans ton nécessaire'}</span>
+    <div class="detail-bar">
+      <button class="icon-btn icon-btn-tonal" id="verso-back" aria-label="Retour"><svg class="ic"><use href="#i-back"/></svg></button>
     </div>
-    ${url
-      ? `<button class="verso-photo" id="verso-photo" style="view-transition-name: recto" aria-label="Voir la photo en grand"><img src="${url}" alt="Photo : ${esc(name)}${p.size ? ', ' + esc(sizeText(p)) : ''}"></button>`
-      : `<div class="verso-photo recto-text" style="view-transition-name: recto" aria-hidden="true">${esc(name)}</div>`}
-    <div class="contre">
-      <p class="contre-brand">${p.brand ? esc(p.brand) : '<span class="visually-hidden">Marque </span>[marque à compléter]'}</p>
-      <h2 class="contre-name" id="verso-name">${esc(name)}</h2>
-      <ul class="lines">
-        ${lineHtml({ key: 'name', label: 'Nom exact', value: esc(p.name), missing: !p.name })}
-        ${lineHtml({ key: 'brand', label: 'Marque', value: esc(p.brand), missing: !p.brand })}
-        ${lineHtml({ key: 'size', label: 'Contenance', icon: '<svg class="ic ic-sm" aria-hidden="true"><use href="#i-e"/></svg>', value: sizeText(p), missing: !p.size, aria: sizeAria })}
-        ${lineHtml({ key: 'category', label: 'Catégorie', value: esc(p.category), missing: !p.category })}
-        ${p.inList ? lineHtml({ key: 'qty', label: 'Quantité à acheter', value: String(p.qty) }) : ''}
-        ${lineHtml({ key: 'usualPrice', label: usualLabel, value: p.usualPrice != null ? euro(p.usualPrice) : '', missing: p.usualPrice == null })}
-        ${lineHtml({ key: 'seen', label: seenLabel, value: seenValue, missing: !p.seen,
-            aria: p.seen ? `Vu en magasin le ${dateLong(p.seen.date)}, ${euro(p.seen.price)}${gap ? ', ' + gap.word + (gap.sign ? ' de ' + euro(Math.abs(p.seen.price - p.usualPrice)) : '') : ''}. Modifier` : 'Noter le prix vu en magasin' })}
-        ${lineHtml({ key: 'last', label: 'Dernier achat', value: lastBuy ? dateLong(lastBuy.date) : 'jamais', disabled: true })}
-        ${rebuy ? lineHtml({ key: 'rebuy', label: 'Rachat', value: rebuy, disabled: true }) : ''}
-      </ul>
-      <button class="note${p.note ? '' : ' is-missing'}" data-edit="note" aria-label="${p.note ? 'Note distinctive : ' + esc(p.note) + '. Modifier' : 'Ajouter une note distinctive'}">${p.note ? esc(p.note) : 'Ajoute ce qui le distingue : « bouchon doré, pas la version bleue ».'}</button>
+    <figure class="hero${url ? '' : ' thumb-text'}" style="view-transition-name: product">
+      ${url
+        ? `<button class="hero-btn" id="verso-photo" aria-label="Voir la photo en grand"><img src="${url}" alt="Photo : ${esc(name)}${p.size ? ', ' + esc(sizeText(p)) : ''}"></button>`
+        : `<span aria-hidden="true">${esc(initials(p))}</span>`}
+      <span class="hero-photo-btn"><button class="icon-btn icon-btn-tonal" id="verso-photo-change" aria-label="${p.photo ? 'Changer la photo' : 'Ajouter une photo'}"><svg class="ic"><use href="#i-camera"/></svg></button></span>
+    </figure>
 
-      <div class="verso-actions">
-        ${p.inList
-          ? `<button class="btn btn-outlined" data-toggle-list="${p.id}">Retirer de la liste</button>`
-          : `<button class="btn btn-tonal" data-toggle-list="${p.id}"><svg class="ic" aria-hidden="true"><use href="#i-list-add"/></svg>Remettre dans la liste</button>`}
-        <button class="btn btn-outlined" id="verso-photo-change"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>${p.photo ? 'Changer la photo' : 'Ajouter une photo'}</button>
-      </div>
+    <div class="detail-body">
+      <header>
+        <p class="overline">${p.brand ? esc(p.brand) : 'Marque à compléter'}</p>
+        <h2 class="detail-name" id="verso-name">${esc(name)}</h2>
+        <div class="facts">
+          ${p.size ? `<span class="fact"><svg class="ic" aria-hidden="true"><use href="#i-e"/></svg><span class="visually-hidden">Contenance </span>${sizeText(p)}</span>` : '<span class="fact fact-missing">Contenance à compléter</span>'}
+          ${p.category ? `<span class="fact"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg>${esc(p.category)}</span>` : ''}
+          ${p.inList && p.qty > 1 ? `<span class="fact">×${p.qty} à prendre</span>` : ''}
+          ${rebuy ? `<span class="fact">Racheté ${rebuy}</span>` : ''}
+        </div>
+      </header>
+
+      <div class="detail-actions">${actions}</div>
+
+      <section class="price-card" aria-labelledby="price-title">
+        <div class="price-card-head">
+          <div>
+            <p class="price-label" id="price-title">${usualLabel}</p>
+            <p class="price-big${p.usualPrice == null ? ' is-missing' : ''}">${p.usualPrice != null ? euro(p.usualPrice) : 'Pas encore noté'}</p>
+          </div>
+          <button class="icon-btn" data-edit="usualPrice" aria-label="Modifier le prix habituel"><svg class="ic"><use href="#i-edit"/></svg></button>
+        </div>
+        ${p.seen ? `<div class="price-seen">Vu le ${dateShort(p.seen.date)} : <span class="num">${euro(p.seen.price)}</span>
+          ${gap && gap.sign !== 0 ? `<span class="tag ${gap.sign > 0 ? 'tag-accent' : ''}">${gap.text} · ${gap.sign > 0 ? 'plus cher' : 'moins cher'}</span>` : gap ? '<span class="tag">identique</span>' : ''}</div>` : ''}
+        <div class="btn-row"><button class="btn btn-text" data-edit="seen"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg>${p.seen ? 'Noter un nouveau prix vu' : 'Noter le prix vu en magasin'}</button></div>
+      </section>
+
+      <section class="label-card" aria-labelledby="label-title">
+        <h3 id="label-title">Contre-étiquette</h3>
+        <ul class="lines">
+          ${lineHtml({ key: 'name', label: 'Nom exact', value: esc(p.name), missing: !p.name })}
+          ${lineHtml({ key: 'brand', label: 'Marque', value: esc(p.brand), missing: !p.brand })}
+          ${lineHtml({ key: 'size', label: 'Contenance', icon: '<svg class="ic" aria-hidden="true"><use href="#i-e"/></svg>', value: sizeText(p), missing: !p.size, aria: p.size ? `Contenance, ${String(p.size).replace('.', ',')} ${unitWord}. Modifier` : 'Contenance, à compléter' })}
+          ${lineHtml({ key: 'category', label: 'Catégorie', value: esc(p.category), missing: !p.category })}
+          ${p.inList ? lineHtml({ key: 'qty', label: 'Quantité', value: String(p.qty) }) : ''}
+        </ul>
+        <button class="note sl${p.note ? '' : ' is-missing'}" data-edit="note" aria-label="${p.note ? 'Note distinctive : ' + esc(p.note) + '. Modifier' : 'Ajouter une note distinctive'}">${p.note ? esc(p.note) : 'Ce qui le distingue des versions proches : « bouchon doré, pas la version bleue ».'}</button>
+      </section>
 
       ${p.history.length ? `
       <section class="history" aria-labelledby="h-title">
-        <h3 id="h-title">Historique</h3>
-        <ol>${p.history.slice(-6).reverse().map(h => `<li><span>${dateLong(h.date)}</span><span>${h.price != null ? euro(h.price) : '—'}</span></li>`).join('')}</ol>
+        <h3 id="h-title">Historique d'achat</h3>
+        <ol>${p.history.slice(-6).reverse().map(h => `<li><span>${dateLong(h.date)}</span><span class="${h.price != null ? '' : 'muted'}">${h.price != null ? euro(h.price) : 'prix non noté'}</span></li>`).join('')}</ol>
       </section>` : ''}
 
-      <div class="verso-delete">
-        <button class="btn btn-text" id="verso-delete"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Supprimer de ton nécessaire</button>
+      <div class="danger-zone">
+        <button class="btn btn-text btn-danger" id="verso-delete"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg>Supprimer de ton nécessaire</button>
       </div>
     </div>`;
 }
@@ -370,7 +416,7 @@ function renderAll() {
 }
 
 /* ============================================================
-   Navigation : onglets et verso (hash pour le bouton retour)
+   Navigation : sections et fiche (hash pour le bouton retour)
    ============================================================ */
 function setTab(tab, { focus = false } = {}) {
   state.tab = tab;
@@ -382,33 +428,26 @@ function setTab(tab, { focus = false } = {}) {
     $(`#panel-${t}`).hidden = !on;
   }
   if (focus) $(`#tab-${tab}`).focus();
-  $('#add-inlist').checked = tab === 'liste';
+  if (!isTwoPane()) window.scrollTo(0, 0); else $('#main').scrollTo(0, 0);
 }
 
 let lastTrigger = null;
 const prefersReduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isTwoPane = () => matchMedia('(min-width: 840px)').matches;
-
 function quiet(t) { t.ready.catch(() => {}); t.finished.catch(() => {}); t.updateCallbackDone.catch(() => {}); return t; }
-
-function withTransition(update, sourceRow, after) {
-  if (!document.startViewTransition || prefersReduced()) { update(); after?.(); return; }
-  const img = sourceRow?.querySelector('.recto');
-  if (img) img.style.viewTransitionName = 'recto';
-  const t = quiet(document.startViewTransition(() => {
-    if (img) img.style.viewTransitionName = '';
-    update();
-  }));
-  t.updateCallbackDone.then(() => after?.(), () => after?.());
-}
+const vtSource = id => document.querySelector(`.panel:not([hidden]) [data-vt="${id}"]`);
 
 function openVerso(id, trigger) {
   lastTrigger = trigger || document.activeElement;
-  const row = trigger?.closest('.row');
-  withTransition(() => {
-    state.openId = id;
-    renderAll();
-  }, row, () => $('#verso-back')?.focus());
+  const focusBack = () => $('#verso-back')?.focus();
+  const update = () => { state.openId = id; renderAll(); };
+  if (!document.startViewTransition || prefersReduced()) { update(); focusBack(); }
+  else {
+    const src = vtSource(id);
+    if (src) src.style.viewTransitionName = 'product';
+    const t = quiet(document.startViewTransition(() => { if (src) src.style.viewTransitionName = ''; update(); }));
+    t.updateCallbackDone.then(focusBack, focusBack);
+  }
   if (location.hash !== `#produit/${id}`) history.pushState({ verso: id }, '', `#produit/${id}`);
 }
 
@@ -418,17 +457,17 @@ function closeVerso({ fromPop = false } = {}) {
   const update = () => { state.openId = null; renderAll(); };
   const refocus = () => {
     const back = document.querySelector(`.panel:not([hidden]) [data-open="${id}"]`) || (lastTrigger?.isConnected ? lastTrigger : null);
-    (back || $(`#tab-${state.tab}`)).focus();
+    (back || $(`#tab-${state.tab}`)).focus({ preventScroll: false });
   };
   if (!document.startViewTransition || prefersReduced()) { update(); refocus(); }
   else {
     const t = quiet(document.startViewTransition(() => {
       update();
-      const target = document.querySelector(`.panel:not([hidden]) .row[data-id="${id}"] .recto`);
-      if (target) target.style.viewTransitionName = 'recto';
+      const target = vtSource(id);
+      if (target) target.style.viewTransitionName = 'product';
     }));
     t.updateCallbackDone.then(refocus, refocus);
-    t.finished.then(() => document.querySelectorAll('.recto').forEach(r => (r.style.viewTransitionName = '')), () => {});
+    t.finished.then(() => { const s = vtSource(id); if (s) s.style.viewTransitionName = ''; }, () => {});
   }
   if (!fromPop && location.hash.startsWith('#produit/')) history.back();
 }
@@ -438,6 +477,12 @@ window.addEventListener('popstate', () => {
   if (m && byId(m[1])) { state.openId = m[1]; renderAll(); }
   else closeVerso({ fromPop: true });
 });
+
+/* Grand titre qui se réduit au scroll */
+const topObserver = new IntersectionObserver(entries => {
+  for (const e of entries) e.target.closest('.topbar').querySelector('.topbar-row').classList.toggle('is-scrolled', !e.isIntersecting);
+}, { rootMargin: '-64px 0px 0px 0px' });
+document.querySelectorAll('[data-headline]').forEach(h => topObserver.observe(h));
 
 /* ============================================================
    Actions de la liste
@@ -549,15 +594,15 @@ function confirmDialog({ title, text, ok }) {
 
 /* ---------- Ajout rapide (B02, B40, B62) ---------- */
 let addPhotoBlob = null;
+const ADD_PREVIEW_EMPTY = document.querySelector('#add-preview').innerHTML;
 let suggestIndex = -1;
 
 function resetAdd() {
   $('#add-form').reset();
   $('#add-inlist').checked = state.tab === 'liste';
   addPhotoBlob = null;
-  $('#add-preview').hidden = true;
-  $('#add-preview').innerHTML = '';
-  $('#add-photo-label').textContent = 'Prendre ou choisir une photo';
+  $('#add-drop').classList.remove('has-photo');
+  $('#add-preview').innerHTML = ADD_PREVIEW_EMPTY;
   setAddError('');
   renderSuggest();
 }
@@ -567,7 +612,7 @@ function setAddError(msg) {
   if (msg) {
     help.textContent = msg; help.classList.add('is-error'); input.setAttribute('aria-invalid', 'true');
   } else {
-    help.textContent = 'Avec la variante, par exemple « Eau de toilette Intense ». Un nom suffit, le reste peut attendre.';
+    help.textContent = 'Avec la variante, par exemple « Eau de toilette Intense ».';
     help.classList.remove('is-error'); input.removeAttribute('aria-invalid');
   }
 }
@@ -582,7 +627,7 @@ function renderSuggest() {
   input.setAttribute('aria-expanded', String(items.length > 0));
   list.replaceChildren(...items.map((p, i) => el(`
     <li role="option" id="sg-${i}" data-pick="${p.id}" aria-selected="false">
-      ${rectoHtml(p)}
+      ${thumbHtml(p)}
       <span><span class="suggest-name">${esc(displayName(p))}</span>
       <span class="suggest-meta">${[p.brand && esc(p.brand), sizeText(p), p.inList ? 'déjà dans la liste' : 'dans ton nécessaire'].filter(Boolean).join(' · ')}</span></span>
     </li>`)));
@@ -621,8 +666,7 @@ $('#add-photo').addEventListener('change', async e => {
     addPhotoBlob = await compressPhoto(file);
     const url = URL.createObjectURL(addPhotoBlob);
     $('#add-preview').innerHTML = `<img src="${url}" alt="Aperçu de la photo choisie">`;
-    $('#add-preview').hidden = false;
-    $('#add-photo-label').textContent = 'Changer la photo';
+    $('#add-drop').classList.add('has-photo');
   } catch {
     addPhotoBlob = null;
     snackbar('La photo n\'a pas été enregistrée.', { error: true, action: 'Réessayer', onAction: () => $('#add-photo').click() });
@@ -768,7 +812,7 @@ document.addEventListener('click', async e => {
     const p = byId(t.dataset.relist);
     await putInList(p);
     snackbar(`${displayName(p)} remis dans la liste.`, { action: 'Annuler', onAction: () => removeFromList([p.id], `${displayName(p)} retiré de la liste.`) });
-    requestAnimationFrame(() => document.querySelector(`#nec-rows [data-open="${p.id}"]`)?.focus());
+    requestAnimationFrame(() => document.querySelector(`#nec-grid [data-open="${p.id}"]`)?.focus());
     return;
   }
   if (t.dataset.create) {
@@ -776,6 +820,16 @@ document.addEventListener('click', async e => {
     openDialog($('#add-dialog'), t); renderSuggest(); $('#add-name').focus(); return;
   }
   if (t.dataset.edit) return openEdit(t.dataset.edit, t);
+  if (t.dataset.buy || t.dataset.unbuy) {
+    const p = byId(t.dataset.buy || t.dataset.unbuy);
+    await setBought(p, !!t.dataset.buy);
+    requestAnimationFrame(() => document.querySelector('#verso .detail-actions button')?.focus());
+    return;
+  }
+  if (t.dataset.goto) return setTab(t.dataset.goto, { focus: true });
+  if (t.dataset.filter === 'incomplete') { state.onlyIncomplete = !state.onlyIncomplete; renderNecessaire(); return document.querySelector('[data-filter="incomplete"]')?.focus(); }
+  if (t.dataset.cat) { state.category = state.category === t.dataset.cat ? null : t.dataset.cat; renderNecessaire(); return document.querySelector(`[data-cat="${CSS.escape(t.dataset.cat)}"]`)?.focus(); }
+  if (t.hasAttribute('data-menu-btn')) return toggleMenu(undefined, t);
   if (t.dataset.toggleList) {
     const p = byId(t.dataset.toggleList);
     if (p.inList) await removeFromList([p.id], `${displayName(p)} retiré de la liste.`);
@@ -805,9 +859,6 @@ document.addEventListener('click', async e => {
       const ids = listItems().filter(p => p.bought).map(p => p.id);
       return removeFromList(ids, ids.length > 1 ? `${ids.length} produits retirés de la liste.` : 'Produit retiré de la liste.');
     }
-    case 'filter-incomplete':
-      state.onlyIncomplete = !state.onlyIncomplete; return renderNecessaire();
-    case 'menu-btn': return toggleMenu();
   }
   if (t.dataset.action === 'export') { toggleMenu(false); return exportData(); }
   if (t.dataset.action === 'import') { toggleMenu(false); return $('#import-file').click(); }
@@ -819,11 +870,11 @@ document.addEventListener('change', e => {
 });
 
 $('#search').addEventListener('input', e => { state.query = e.target.value; renderNecessaire(); });
-$('#sort').addEventListener('change', e => { state.sort = e.target.value; renderNecessaire(); });
+document.addEventListener('change', e => { if (e.target.id === 'sort') { state.sort = e.target.value; renderNecessaire(); $('#sort').focus(); } });
 
 /* Onglets : flèches, Home, End (activation automatique) */
-$('.tabs').addEventListener('click', e => { const tab = e.target.closest('[role="tab"]'); if (tab) setTab(tab.id.replace('tab-', '')); });
-$('.tabs').addEventListener('keydown', e => {
+$('.toolbar').addEventListener('click', e => { const tab = e.target.closest('[role="tab"]'); if (tab) setTab(tab.id.replace('tab-', '')); });
+$('.toolbar').addEventListener('keydown', e => {
   const order = ['liste', 'necessaire'];
   let i = order.indexOf(state.tab);
   if (e.key === 'ArrowRight') i = (i + 1) % order.length;
@@ -836,21 +887,28 @@ $('.tabs').addEventListener('keydown', e => {
 });
 
 /* Menu d'options */
-function toggleMenu(force) {
+let menuTrigger = null;
+function toggleMenu(force, trigger) {
   const menu = $('#app-menu');
   const open = force ?? menu.hidden;
+  if (trigger) menuTrigger = trigger;
   menu.hidden = !open;
-  $('#menu-btn').setAttribute('aria-expanded', String(open));
-  if (open) menu.querySelector('[role="menuitem"]').focus();
+  menuTrigger?.setAttribute('aria-expanded', String(open));
+  if (open && menuTrigger) {
+    const r = menuTrigger.getBoundingClientRect();
+    menu.style.top = `${r.bottom + 4}px`;
+    menu.style.right = `${Math.max(8, innerWidth - r.right)}px`;
+    menu.querySelector('[role="menuitem"]').focus();
+  }
 }
 $('#app-menu').addEventListener('keydown', e => {
   const items = [...$('#app-menu').querySelectorAll('[role="menuitem"]')];
   const i = items.indexOf(document.activeElement);
   if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
   if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
-  if (e.key === 'Escape' || e.key === 'Tab') { toggleMenu(false); if (e.key === 'Escape') $('#menu-btn').focus(); }
+  if (e.key === 'Escape' || e.key === 'Tab') { toggleMenu(false); if (e.key === 'Escape') menuTrigger?.focus(); }
 });
-document.addEventListener('pointerdown', e => { if (!$('#app-menu').hidden && !e.target.closest('.menu-anchor')) toggleMenu(false); });
+document.addEventListener('pointerdown', e => { if (!$('#app-menu').hidden && !e.target.closest('.menu-anchor') && !e.target.closest('#app-menu')) toggleMenu(false); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && state.openId && !document.querySelector('dialog[open]') && document.activeElement?.closest('#verso')) closeVerso();
 });
@@ -860,12 +918,12 @@ document.addEventListener('keydown', e => {
    ============================================================ */
 let swipe = null;
 let swipeEndedAt = 0;
-$('#liste-rows').addEventListener('pointerdown', e => {
-  const row = e.target.closest('.row');
-  if (!row || e.pointerType === 'mouse' || e.target.closest('.check')) return;
+$('#todo-rows').addEventListener('pointerdown', e => {
+  const row = e.target.closest('.item');
+  if (!row || e.pointerType === 'mouse' || e.target.closest('.cb')) return;
   swipe = { row, x: e.clientX, y: e.clientY, dx: 0, active: false, id: e.pointerId };
 });
-$('#liste-rows').addEventListener('pointermove', e => {
+$('#todo-rows').addEventListener('pointermove', e => {
   if (!swipe || e.pointerId !== swipe.id) return;
   const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
   if (!swipe.active) {
@@ -891,8 +949,8 @@ function endSwipe() {
     row.style.transform = '';
   }
 }
-$('#liste-rows').addEventListener('pointerup', endSwipe);
-$('#liste-rows').addEventListener('pointercancel', () => { if (swipe?.row) swipe.row.style.transform = ''; swipe = null; });
+$('#todo-rows').addEventListener('pointerup', endSwipe);
+$('#todo-rows').addEventListener('pointercancel', () => { if (swipe?.row) swipe.row.style.transform = ''; swipe = null; });
 
 /* ============================================================
    Export / import (B73)
@@ -946,25 +1004,33 @@ $('#import-file').addEventListener('change', async e => {
    Démo (?demo) : exemples clairement fictifs, pour essayer
    ============================================================ */
 function demoPhoto(colors, label) {
-  const c = document.createElement('canvas'); c.width = 600; c.height = 600;
+  // Photos d'exemple dessinées : un flacon sur fond teinté, lumière douce.
+  const c = document.createElement('canvas'); c.width = 800; c.height = 800;
   const g = c.getContext('2d');
-  const grd = g.createLinearGradient(0, 0, 600, 600);
-  grd.addColorStop(0, colors[0]); grd.addColorStop(1, colors[1]);
-  g.fillStyle = '#e9ecee'; g.fillRect(0, 0, 600, 600);
-  g.fillStyle = grd; g.beginPath(); g.roundRect(190, 90, 220, 440, 28); g.fill();
-  g.fillStyle = colors[2] || '#333'; g.fillRect(250, 40, 100, 60);
-  g.fillStyle = 'rgba(255,255,255,.85)'; g.fillRect(210, 260, 180, 110);
-  g.fillStyle = '#222'; g.font = '600 26px sans-serif'; g.textAlign = 'center'; g.fillText(label, 300, 325);
-  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.8));
+  const bg = g.createRadialGradient(400, 300, 60, 400, 400, 620);
+  bg.addColorStop(0, colors[3] || '#f4f1ec'); bg.addColorStop(1, colors[4] || '#d9d4cc');
+  g.fillStyle = bg; g.fillRect(0, 0, 800, 800);
+  g.fillStyle = 'rgba(0,0,0,.10)'; g.beginPath(); g.ellipse(400, 690, 170, 26, 0, 0, Math.PI * 2); g.fill();
+  const body = g.createLinearGradient(260, 0, 540, 0);
+  body.addColorStop(0, colors[0]); body.addColorStop(.55, colors[1]); body.addColorStop(1, colors[0]);
+  g.fillStyle = body; g.beginPath(); g.roundRect(270, 210, 260, 480, [70, 70, 36, 36]); g.fill();
+  g.fillStyle = 'rgba(255,255,255,.22)'; g.beginPath(); g.roundRect(300, 240, 26, 400, 13); g.fill();
+  g.fillStyle = colors[2]; g.beginPath(); g.roundRect(340, 120, 120, 100, 14); g.fill();
+  g.fillStyle = 'rgba(255,255,255,.92)'; g.beginPath(); g.roundRect(300, 390, 200, 150, 10); g.fill();
+  g.fillStyle = '#20262b'; g.textAlign = 'center';
+  g.font = '600 34px "IBM Plex Sans Condensed", sans-serif'; g.fillText(label, 400, 462);
+  g.font = '400 20px "IBM Plex Sans Condensed", sans-serif'; g.fillText('EXEMPLE', 400, 500);
+  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
 }
 async function seedDemo() {
+  await document.fonts.ready;
   const day = 86400000, now = Date.now();
   const ex = [
-    { name: 'Gel douche Hydra Fresh', brand: 'Marque exemple A', size: 250, unit: 'ml', category: 'Gel douche', usualPrice: 349, inList: true, colors: ['#1d4f8a', '#8db6e0', '#0f2a4a'], label: 'HYDRA', history: [now - 64 * day, now - 43 * day, now - 21 * day] },
-    { name: 'Exfoliant corps abricot', brand: '', size: 200, unit: 'ml', category: 'Exfoliant', usualPrice: 790, inList: true, bought: true, colors: ['#f2c14e', '#e2763a', '#7a3b12'], label: 'ABRICOT', history: [now - 90 * day] },
-    { name: 'Déodorant bille peau sensible', brand: 'Marque exemple B', size: 50, unit: 'ml', category: 'Déodorant', usualPrice: 295, inList: true, qty: 2, colors: ['#ececec', '#b9c3c9', '#5a6872'], label: 'SENSIBLE' },
-    { name: 'Eau de toilette Intense', brand: 'Marque exemple C', size: 100, unit: 'ml', category: 'Parfum', usualPrice: 5490, seen: { price: 5790, date: now - 1 * day }, inList: true, note: 'Bouchon doré. Pas la version « Eau fraîche » au flacon bleu.', colors: ['#2a2a2a', '#c9a45c', '#c9a45c'], label: 'INTENSE', history: [now - 180 * day, now - 120 * day, now - 58 * day] },
-    { name: 'Shampoing doux avoine', brand: 'Marque exemple A', size: null, unit: 'ml', category: 'Shampoing', inList: false, colors: ['#e8dcc0', '#bfa678', '#6b5a3a'], label: 'AVOINE' },
+    { name: 'Gel douche Hydra Fresh', brand: 'Marque exemple A', size: 250, unit: 'ml', category: 'Gel douche', usualPrice: 349, inList: true, colors: ['#1d4f8a', '#5f95d0', '#0f2a4a', '#eaf1f8', '#c9d8e8'], label: 'HYDRA', history: [now - 64 * day, now - 43 * day, now - 21 * day] },
+    { name: 'Exfoliant corps abricot', brand: '', size: 200, unit: 'ml', category: 'Exfoliant', usualPrice: 790, inList: true, bought: true, colors: ['#e2763a', '#f5b25a', '#7a3b12', '#fbefe2', '#ecd2b8'], label: 'ABRICOT', history: [now - 90 * day] },
+    { name: 'Déodorant bille peau sensible', brand: 'Marque exemple B', size: 50, unit: 'ml', category: 'Déodorant', usualPrice: 295, inList: true, qty: 2, colors: ['#c9d1d6', '#f4f6f7', '#5a6872', '#eef1f2', '#cfd6da'], label: 'SENSIBLE' },
+    { name: 'Eau de toilette Intense', brand: 'Marque exemple C', size: 100, unit: 'ml', category: 'Parfum', usualPrice: 5490, seen: { price: 5790, date: now - 1 * day }, inList: true, note: 'Bouchon doré. Pas la version « Eau fraîche » au flacon bleu.', colors: ['#3a2c1c', '#8a6a3a', '#c9a45c', '#f2ece2', '#d6c9b4'], label: 'INTENSE', history: [now - 180 * day, now - 120 * day, now - 58 * day] },
+    { name: 'Shampoing doux avoine', brand: 'Marque exemple A', size: null, unit: 'ml', category: 'Shampoing', inList: false, colors: ['#bfa678', '#e8dcc0', '#6b5a3a', '#f5f1e8', '#ddd3c0'], label: 'AVOINE' },
     { name: 'Crème mains karité', brand: '', size: 75, unit: 'ml', category: 'Soin', inList: false, noPhoto: true },
   ];
   let order = now;
@@ -997,8 +1063,6 @@ async function start() {
   if (m && byId(m[1])) state.openId = m[1];
   else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   renderAll();
-  const setH = () => document.documentElement.style.setProperty('--appbar-h', $('.appbar').offsetHeight + 'px');
-  setH(); addEventListener('resize', setH);
 }
 start();
 
