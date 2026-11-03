@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Necess</title>
+  <meta name="description" content="Ta liste à racheter, avec la face et la contre-étiquette de chacun de tes produits.">
+  <meta name="theme-color" content="#2B3640" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#232D35" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/atkinson-next-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plex-condensed-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Icônes au trait (grille 24, trait 1.75), utilisées par <use>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="18.5" r="1.4" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3.5L9 6h6l1.5 2H20v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-e" viewBox="0 0 24 24"><path d="M6 12h12M18 12a6 6 0 1 0-1.8 4.3"/></symbol>
+    <symbol id="i-list-add" viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7M18 14v6M15 17h6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></symbol>
+  </svg>
+
+  <div class="shell" id="shell">
+    <header class="appbar">
+      <div class="appbar-row">
+        <h1 class="appbar-title">Necess</h1>
+        <div class="menu-anchor">
+          <button class="icon-btn on-secondary" id="menu-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="app-menu" aria-label="Plus d'options">
+            <svg class="ic"><use href="#i-more"/></svg>
+          </button>
+          <div class="menu" id="app-menu" role="menu" hidden>
+            <button role="menuitem" class="menu-item" data-action="export">Exporter tes données</button>
+            <button role="menuitem" class="menu-item" data-action="import">Importer une sauvegarde</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sections de Necess">
+        <button class="tab" role="tab" id="tab-liste" aria-controls="panel-liste" aria-selected="true">À racheter</button>
+        <button class="tab" role="tab" id="tab-necessaire" aria-controls="panel-necessaire" aria-selected="false" tabindex="-1">Ton nécessaire</button>
+      </div>
+    </header>
+
+    <div class="panes" id="panes">
+      <main class="pane pane-main" id="main">
+        <!-- Liste à racheter : des rectos -->
+        <section class="panel" id="panel-liste" role="tabpanel" aria-labelledby="tab-liste">
+          <p class="status" id="liste-status" aria-live="polite"></p>
+          <ul class="rows" id="liste-rows" aria-label="Produits à racheter"></ul>
+          <div class="empty" id="liste-empty" hidden></div>
+          <div class="close-trip" id="close-trip" hidden>
+            <button class="btn btn-outlined" id="close-trip-btn"></button>
+          </div>
+        </section>
+
+        <!-- Ton nécessaire : la mémoire des produits -->
+        <section class="panel" id="panel-necessaire" role="tabpanel" aria-labelledby="tab-necessaire" hidden>
+          <div class="toolbar" role="search">
+            <label class="search-field">
+              <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+              <span class="visually-hidden">Chercher dans ton nécessaire</span>
+              <input type="search" id="search" placeholder="Nom, marque ou catégorie" autocomplete="off" enterkeyhint="search">
+            </label>
+            <div class="filters">
+              <button class="chip" id="filter-incomplete" aria-pressed="false"></button>
+              <label class="sort">
+                <span class="visually-hidden">Trier</span>
+                <select id="sort">
+                  <option value="name">Par nom</option>
+                  <option value="last">Par dernier achat</option>
+                  <option value="freq">Les plus rachetés</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <p class="status" id="nec-status" aria-live="polite"></p>
+          <ul class="rows rows-compact" id="nec-rows" aria-label="Produits de ton nécessaire"></ul>
+          <div class="empty" id="nec-empty" hidden></div>
+        </section>
+
+        <div class="fab-rail">
+          <button class="btn btn-filled btn-wide" id="add-btn">
+            <svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>
+            Ajouter un produit
+          </button>
+        </div>
+      </main>
+
+      <!-- Le verso : fiche produit -->
+      <aside class="pane pane-verso" id="verso" hidden aria-labelledby="verso-name"></aside>
+    </div>
+  </div>
+
+  <!-- Ajout rapide -->
+  <dialog class="dialog dialog-full" id="add-dialog" aria-labelledby="add-title">
+    <form method="dialog" id="add-form" novalidate>
+      <div class="dialog-bar">
+        <button type="button" class="icon-btn" data-close aria-label="Fermer sans ajouter"><svg class="ic"><use href="#i-close"/></svg></button>
+        <h2 id="add-title" class="dialog-title">Ajouter un produit</h2>
+      </div>
+      <div class="dialog-body">
+        <div class="field">
+          <label for="add-name" class="field-label">Nom exact</label>
+          <input id="add-name" class="field-input" type="text" autocomplete="off" aria-describedby="add-name-help" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="add-suggest" enterkeyhint="done">
+          <p class="field-help" id="add-name-help">Avec la variante, par exemple « Eau de toilette Intense ». Un nom suffit, le reste peut attendre.</p>
+        </div>
+        <ul class="suggest" id="add-suggest" role="listbox" aria-label="Produits déjà dans ton nécessaire" hidden></ul>
+        <div class="add-photo">
+          <div class="add-photo-preview" id="add-preview" hidden></div>
+          <label class="btn btn-tonal">
+            <svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>
+            <span id="add-photo-label">Prendre ou choisir une photo</span>
+            <input type="file" accept="image/*" capture="environment" id="add-photo" class="visually-hidden">
+          </label>
+          <p class="field-help">Le produit seul, de face, l'étiquette lisible.</p>
+        </div>
+        <label class="check-line">
+          <input type="checkbox" id="add-inlist" checked>
+          <span>Le mettre dans la liste à racheter</span>
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-filled btn-wide" id="add-submit">Ajouter</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modifier une ligne de la contre-étiquette -->
+  <dialog class="dialog" id="edit-dialog" aria-labelledby="edit-title">
+    <form method="dialog" id="edit-form" novalidate>
+      <h2 id="edit-title" class="dialog-title"></h2>
+      <div class="dialog-body" id="edit-body"></div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-text" data-close>Annuler</button>
+        <button type="submit" class="btn btn-filled">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmation -->
+  <dialog class="dialog" id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+    <form method="dialog">
+      <h2 id="confirm-title" class="dialog-title"></h2>
+      <p id="confirm-text" class="dialog-text"></p>
+      <div class="dialog-actions">
+        <button value="cancel" class="btn btn-text">Annuler</button>
+        <button value="ok" class="btn btn-filled" id="confirm-ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Photo en grand -->
+  <dialog class="dialog dialog-viewer" id="viewer" aria-label="Photo en grand">
+    <button type="button" class="icon-btn on-inverse viewer-close" data-close aria-label="Fermer la photo"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div class="viewer-scroll" id="viewer-scroll"><img id="viewer-img" alt=""></div>
+    <p class="viewer-hint">Touche deux fois pour zoomer</p>
+  </dialog>
+
+  <input type="file" id="import-file" accept="application/json,.json" class="visually-hidden" tabindex="-1" aria-hidden="true">
+  <input type="file" id="photo-file" accept="image/*" capture="environment" class="visually-hidden" tabindex="-1" aria-hidden="true">
+
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite" hidden>
+    <p class="snackbar-text" id="snackbar-text"></p>
+    <button class="btn btn-text on-inverse" id="snackbar-action" hidden></button>
+    <button class="icon-btn on-inverse" id="snackbar-close" aria-label="Fermer le message"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
