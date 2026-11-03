@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Territoire F : L'archive</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600&family=Golos+Text:wght@400;500;600&family=Fragment+Mono&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+:root{--titrage:"Bodoni Moda",serif;--texte:"Golos Text",sans-serif;--util:"Fragment Mono",monospace;
+ --carton:#D8D6D0;  /* 60 % : gris des boîtes de conservation sans acide */
+ --fiche:#F7F7F5;   /* fiches */
+ --encre:#1B1B1B;   /* 30 % */
+ --tampon:#2443A6;  /* 10 % : bleu d'encre de tampon d'inventaire, réservé aux numéros et à l'action « inscrire » */}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font:15px/1.5 system-ui}
+.planche{display:grid;grid-template-columns:1180px 380px;gap:24px;padding:24px;width:1608px}
+.idee{grid-column:1/-1;margin:0;font:600 22px/1.3 system-ui}.idee small{display:block;font:400 14px system-ui;color:#555}
+.ecran{grid-row:span 3;height:1000px;background:#BDBAB2;display:flex;gap:56px;align-items:center;justify-content:center}
+.tel{position:relative;width:390px;height:820px;background:var(--carton);border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #222;font-family:var(--texte);color:var(--encre)}
+.haut{padding:54px 20px 12px}.reg{font:400 12px var(--util);color:#4A4945}h1{font:400 38px/1.02 var(--titrage);margin:6px 0 0}
+.fiches{padding:4px 14px;display:grid;gap:8px}
+.f{background:var(--fiche);display:grid;grid-template-columns:76px 1fr;gap:12px;padding:10px;position:relative}
+.f .ph{background:#ECEBE8;height:92px;display:grid;place-items:center}.f .n{font:600 15px/1.2 var(--texte);padding-right:64px}.f .m{font:400 12.5px var(--texte);color:#5A5955}
+.f .num{position:absolute;right:10px;top:8px;font:400 12px var(--util);color:var(--tampon)}
+.f .pret{margin-top:6px;font:500 12px var(--texte);color:var(--tampon)}
+.btn{position:absolute;left:14px;right:14px;bottom:24px;height:56px;background:var(--tampon);color:#fff;display:flex;align-items:center;justify-content:center;font:600 16px var(--texte)}
+.fiche .photo{height:300px;background:var(--fiche);display:grid;place-items:center;position:relative;margin:0 14px}
+.tamp{position:absolute;left:14px;top:12px;border:1.5px solid var(--tampon);color:var(--tampon);font:400 13px var(--util);padding:4px 8px;transform:rotate(-3deg)}
+.fiche .corps{margin:0 14px;padding:14px;background:var(--fiche);border-top:1px solid #DDD}.fiche h2{font:400 30px/1.05 var(--titrage);margin:0 0 10px}
+.ligne{display:grid;grid-template-columns:1fr auto;padding:7px 0;border-top:1px solid #E2E1DD;font-size:14px}.ligne b{font:400 13.5px var(--util)}
+.v2{margin-top:10px;padding:8px 10px;background:#E8ECF7;color:var(--tampon);font:500 13px var(--texte)}
+.bloc{border:1px solid #ddd;padding:16px}.bloc h2{margin:0 0 12px;font:600 12px system-ui;color:#666}
+.spec-t{font:400 40px/1.05 var(--titrage);margin:0 0 8px}.spec-p{font:400 16px/1.5 var(--texte);margin:0 0 8px}.spec-c{font:400 17px var(--util)}
+.alt{font-size:13px;color:#666;margin:10px 0 0}.aplats{display:flex;height:64px}.aplats div{display:flex;align-items:flex-end;padding:6px;font:11px system-ui}
+.voix p{margin:0 0 6px;font-family:var(--texte)}
+</style></head><body>
+<div class="planche">
+ <p class="idee">F · L'archive : ton musée du produit parfait, qui te protège des reformulations et des flacons réduits.<small>Indices : numéro de lot, « holy grail », reformulations, réduction de contenance signalée deux mois seulement.</small></p>
+ <section class="ecran">
+  <div class="tel"><div class="haut"><div class="reg">Registre · 12 spécimens</div><h1>3 à racheter</h1></div>
+   <div class="fiches" id="fiches"></div><div class="btn">Inscrire un produit au registre</div></div>
+  <div class="tel fiche"><div class="haut" style="padding-bottom:10px"><div class="reg">Spécimen N° 0007</div></div><div class="photo" id="photo"><span class="tamp">N° 0007 · entré le 2 mars 2025</span></div>
+   <div class="corps"><h2>Eau de toilette Intense</h2><div class="ligne"><span>Marque</span><b>Marque C</b></div><div class="ligne"><span>Contenance</span><b>100 ml</b></div><div class="ligne"><span>Prix habituel</span><b>54,90 €</b></div><div class="ligne"><span>Achats</span><b>4</b></div>
+   <div class="v2">Version 2 · contenance 100 → 90 ml constatée le 2 nov.</div></div></div>
+ </section>
+ <div class="bloc"><h2>Typographie</h2><p class="spec-t">3 à racheter</p><p class="spec-p">Déodorant bille peau sensible, exfoliant corps à l'abricot, recharge économique.</p><p class="spec-c">N° 0042 · 54,90 € · 250 ml</p>
+  <p class="alt">Retenu : Bodoni Moda (didone de cartel de musée, à taille optique) pour le titrage, Golos Text pour le texte, Fragment Mono pour les numéros d'inventaire. Écarté : Newsreader (trop journal).</p>
+  <p class="alt" style="font:500 24px Newsreader">Newsreader · 3 à racheter</p></div>
+ <div class="bloc"><h2>Couleur (intention)</h2><div class="aplats"><div style="flex:6;background:var(--carton)">60 carton</div><div style="flex:3;background:var(--encre);color:#fff">30 encre</div><div style="flex:1;background:var(--tampon)"></div></div>
+  <p class="alt">Porteur : le contenu, plus l'encre du tampon. Contraste dominant : qualité (fond grisé, produits en couleur, un bleu pur).</p></div>
+ <div class="bloc"><h2>Motif, image, voix</h2><p class="alt" style="margin-top:0">Le numéro d'inventaire, frappé au tampon. Photo : le produit de face, cadré comme un objet de collection, fond uni, lumière égale.</p>
+  <div class="voix"><p>« 12 spécimens, 3 à racheter. »</p><p>« Inscrire au registre »</p><p>« Photo non enregistrée. Aucune donnée perdue. Réessaie. »</p></div></div>
+</div>
+<script src="commun.js"></script><script>
+const r=[[0,'0003',1],[3,'0011',1],[2,'0005',1],[1,'0007',0]];
+document.getElementById('fiches').innerHTML=r.map(([i,n,pret])=>{const p=PRODUITS[i];return `<div class="f"><div class="ph">${flacon(p,{w:64,h:80})}</div><div><div class="n">${p.nom}</div><div class="m">${p.cont} · ${p.prix}</div>${pret?'<div class="pret">À racheter</div>':'<div class="m">En place</div>'}</div><span class="num">N° ${n}</span></div>`}).join('');
+document.getElementById('photo').insertAdjacentHTML('beforeend',flacon(PRODUITS[1],{w:190,h:230}));
+</script></body></html>
