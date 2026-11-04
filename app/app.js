@@ -25,41 +25,42 @@
   };
   var LIST_SUGGESTIONS = ['Courses du mois', 'Pharmacie', 'Voyage'];
 
-  var ICONS = {
-    add: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
-    back: 'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
-    more: 'M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
-    search: 'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
-    check: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
-    close: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
-    delete: 'M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z',
-    edit: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
-    minus: 'M19 13H5v-2h14v2z',
-    chevron: 'M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z',
-    up: 'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z',
-    down: 'M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z',
-    flat: 'M4 11h16v2H4z',
-    photo: 'M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z',
-    eye: 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z',
-    share: 'M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z',
-    copy: 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z',
-    archive: 'M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z',
-    warning: 'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
-    info: 'M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z',
-    error: 'M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z',
-    ok: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
-    list: 'M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z',
-    category: 'M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z',
-    download: 'M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z',
-    upload: 'M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z',
-    reuse: 'M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
-    addList: 'M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z',
-    cart: 'M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0020 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z',
-    unarchive: 'M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z'
-  };
 
+  /* Material Symbols Rounded (police locale) : nom interne → nom du symbole */
+  var SYMBOLS = {
+    add: 'add', back: 'arrow_back', more: 'more_vert', search: 'search', check: 'check', close: 'close',
+    delete: 'delete', edit: 'edit', minus: 'remove', chevron: 'chevron_right', up: 'arrow_upward',
+    down: 'arrow_downward', flat: 'horizontal_rule', photo: 'add_a_photo', eye: 'visibility', share: 'share',
+    copy: 'content_copy', archive: 'archive', unarchive: 'unarchive', warning: 'warning', info: 'info',
+    error: 'error', ok: 'check_circle', list: 'checklist', category: 'health_and_beauty', download: 'download',
+    upload: 'upload', reuse: 'restart_alt', addList: 'playlist_add', cart: 'shopping_cart', settings: 'settings'
+  };
   function icon(name, cls) {
-    return '<svg class="icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICONS[name] + '"/></svg>';
+    return '<span class="icon' + (cls ? ' ' + cls : '') + '" aria-hidden="true">' + (SYMBOLS[name] || name) + '</span>';
+  }
+
+  /* App bar : Medium flexible (headline sous la barre) qui se comprime en Small au défilement */
+  function appbar(o) {
+    var lead = o.back ? '<button class="icon-btn" data-action="' + (o.backAction || 'back') + '"' + (o.fallback ? ' data-fallback="' + o.fallback + '"' : '') +
+      ' aria-label="' + (o.backLabel || 'Retour') + '">' + icon('back') + '</button>' : '<span class="appbar__lead"></span>';
+    var bar = '<header class="appbar' + (o.flex ? ' appbar--flex' : '') + '">' + lead +
+      (o.flex ? '<span class="appbar__title" aria-hidden="true">' + h(o.title) + '</span>' : '<h1 class="appbar__title">' + h(o.title) + '</h1>') +
+      (o.actions || '') + '</header>';
+    if (o.flex) bar += '<div class="appbar-large page"><h1 data-headline>' + h(o.title) + '</h1>' + (o.sub ? '<p class="t-body muted">' + o.sub + '</p>' : '') + '</div>';
+    return bar;
+  }
+
+  /* Indicateur de progression linéaire déterminé (piste 4dp, écart, stop indicator) */
+  function progressBar(done, total, labelId, label) {
+    var ratio = total ? done / total : 0;
+    return '<div class="progress__bar" role="progressbar"' + (labelId ? ' aria-labelledby="' + labelId + '"' : ' aria-label="' + h(label) + '"') +
+      ' aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + done + '"' +
+      (ratio === 0 ? ' data-empty' : '') + (ratio === 1 ? ' data-full' : '') +
+      ' style="--p:' + (ratio * 100).toFixed(2) + '%"><span class="progress__fill"></span><span class="progress__rest"></span></div>';
+  }
+
+  function fab(attrs, label) {
+    return '<button class="fab" ' + attrs + ' aria-label="' + h(label) + '">' + icon('add') + '<span class="fab__label" aria-hidden="true">' + h(label) + '</span></button>';
   }
 
   /* ---------- Utilitaires ---------- */
@@ -363,7 +364,19 @@
     var main = $('#main');
     var active = document.activeElement;
     var focusKey = active && main.contains(active) ? active.getAttribute('data-key') : null;
+    var before = {};
+    if (!anim && !reducedMotion()) $all('[data-flip]', main).forEach(function (el) { before[el.getAttribute('data-flip')] = el.getBoundingClientRect().top; });
     main.innerHTML = html;
+    // « Ne pas déplacer silencieusement » : la ligne glisse vers sa nouvelle place
+    if (!anim && Object.keys(before).length && main.animate) {
+      $all('[data-flip]', main).forEach(function (el) {
+        var k = el.getAttribute('data-flip');
+        if (!(k in before)) return;
+        var dy = before[k] - el.getBoundingClientRect().top;
+        if (Math.abs(dy) < 1) return;
+        el.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'none' }], { duration: 500, easing: 'cubic-bezier(.27,1.06,.18,1)' });
+      });
+    }
 
     if (anim) {
       main.classList.remove('anim-fade', 'anim-forward', 'anim-back', 'is-entering');
@@ -402,9 +415,21 @@
     q.forEach(function (fn) { fn(); });
   }
 
+  var lastScrollY = 0;
   function updateTopbar() {
-    var bar = $('.topbar');
-    if (bar) bar.classList.toggle('is-scrolled', window.scrollY > 4);
+    var bar = $('.appbar');
+    if (bar) {
+      var hl = $('[data-headline]');
+      bar.classList.toggle('is-scrolled', hl ? hl.getBoundingClientRect().bottom < bar.offsetHeight : window.scrollY > 4);
+    }
+    // Le FAB étendu se replie en FAB au défilement vers le bas, se redéploie vers le haut
+    var f = $('.main .fab');
+    var y = window.scrollY;
+    if (f) {
+      if (y > lastScrollY + 8 && y > 80) f.classList.add('is-collapsed');
+      else if (y < lastScrollY - 8 || y < 80) f.classList.remove('is-collapsed');
+    }
+    if (Math.abs(y - lastScrollY) > 8) lastScrollY = y;
   }
 
   function emptyState(iconName, title, text, actionHtml) {
@@ -419,8 +444,7 @@
   }
 
   function notFound(text, fallback) {
-    return '<header class="topbar"><button class="icon-btn" data-action="back" data-fallback="' + fallback + '" aria-label="Retour">' + icon('back') + '</button>' +
-      '<h1 class="topbar__title t-title-l">Introuvable</h1></header>' +
+    return appbar({ back: true, fallback: fallback, title: 'Introuvable' }) +
       '<div class="page">' + emptyState('info', 'Élément introuvable', h(text), '<a class="btn btn--tonal" href="#' + fallback + '">Revenir</a>') + '</div>';
   }
 
@@ -428,8 +452,7 @@
   function viewLists() {
     var active = state.lists.filter(function (l) { return !l.archived; }).sort(function (a, b) { return b.updatedAt - a.updatedAt; });
     var archived = state.lists.filter(function (l) { return l.archived; }).sort(function (a, b) { return (b.archivedAt || 0) - (a.archivedAt || 0); });
-    var out = '<div class="page"><header class="page-head"><h1 class="t-headline">Mes listes</h1>' +
-      (active.length ? '<p class="t-body muted">' + plural(active.length, 'liste en cours', 'listes en cours') + '</p>' : '') + '</header>';
+    var out = appbar({ flex: true, title: 'Mes listes', sub: active.length ? plural(active.length, 'liste en cours', 'listes en cours') : '' }) + '<div class="page">';
 
     if (!state.lists.length) {
       out += emptyState('list', 'Aucune liste pour l\'instant',
@@ -441,13 +464,12 @@
     if (active.length) {
       out += '<ul class="rows">' + active.map(function (l, i) {
         var e = estimate(l);
-        var ratio = e.total ? e.done / e.total : 0;
         var sub = e.total ? plural(e.total, 'produit', 'produits') + ' · ' + e.done + ' dans le panier' : 'Vide';
         var price = e.priced ? '<span class="row__price"><span class="t-label num">' + fmtRange(e.min, e.max) + '</span><span class="t-body muted">à prévoir</span></span>' : '';
-        return '<li style="--i:' + Math.min(i, 12) + '"><a class="row state" href="#/liste/' + l.id + '" data-key="list-' + l.id + '">' +
+        return '<li style="--i:' + Math.min(i, 12) + '"><a class="row row--top state" href="#/liste/' + l.id + '" data-key="list-' + l.id + '">' +
           '<span class="row__main"><span class="t-title-m">' + h(l.name) + '</span>' +
           '<span class="t-body muted">' + sub + '</span>' + price +
-          (e.total ? '<span class="progress progress--mini" aria-hidden="true"><span class="progress__track" style="display:block;margin-top:6px"><span class="progress__fill" style="display:block;transform:scaleX(' + ratio + ')"></span></span></span>' : '') +
+          (e.total ? '<span class="progress" style="margin-top:var(--space-100)">' + progressBar(e.done, e.total, null, 'Produits dans le panier') + '</span>' : '') +
           '</span>' + icon('chevron', 'muted') + '</a></li>';
       }).join('') + '</ul>';
     } else {
@@ -463,7 +485,7 @@
             '<button class="btn btn--text" data-action="reuse-list" data-id="' + l.id + '" aria-label="Réutiliser « ' + h(l.name) + ' »">' + icon('reuse') + 'Réutiliser</button></div></li>';
         }).join('') + '</ul></details>';
     }
-    out += '</div><button class="fab" data-action="new-list">' + icon('add') + 'Nouvelle liste</button>';
+    out += '</div>' + fab('data-action="new-list"', 'Nouvelle liste');
     return out;
   }
 
@@ -475,9 +497,12 @@
     var e = estimate(list);
     var groupBy = state.settings.groupBy;
 
-    var out = '<header class="topbar"><button class="icon-btn" data-action="back" data-fallback="/listes" aria-label="Retour aux listes">' + icon('back') + '</button>' +
-      '<h1 class="topbar__title t-title-l">' + h(list.name) + '</h1>' +
-      '<button class="icon-btn" data-action="list-menu" data-id="' + list.id + '" aria-label="Plus d\'actions sur la liste" aria-haspopup="menu" data-key="list-menu">' + icon('more') + '</button></header><div class="page">';
+    var out = appbar({
+      flex: true, back: true, fallback: '/listes', backLabel: 'Retour aux listes', title: list.name,
+      sub: list.archived ? 'Liste terminée' : '',
+      actions: '<button class="icon-btn" data-action="share-list" data-id="' + list.id + '" aria-label="Partager la liste" data-key="share-list">' + icon('share') + '</button>' +
+        '<button class="icon-btn" data-action="list-menu" data-id="' + list.id + '" aria-label="Plus d\'actions sur la liste" aria-haspopup="menu" aria-expanded="false" data-key="list-menu">' + icon('more') + '</button>'
+    }) + '<div class="page">';
 
     if (!entries.length) {
       out += emptyState('cart', 'Cette liste est vide', 'Ajoutez les produits à acheter. Seul le nom est obligatoire.',
@@ -487,7 +512,7 @@
 
     if (e.remaining === 0) {
       out += '<section class="done-card" role="status"><span class="done-card__mark">' + icon('check') + '</span>' +
-        '<h2 class="t-title-l">Tout est dans le panier</h2>' +
+        '<h2>Tout est dans le panier</h2>' +
         '<p class="t-body">' + plural(e.total, 'produit acheté', 'produits achetés') + '. Bonne fin de courses !</p>' +
         '<div class="done-card__actions">' +
         (list.archived ? '<button class="btn btn--filled" data-action="reuse-list" data-id="' + list.id + '">' + icon('reuse') + 'Réutiliser</button>'
@@ -495,7 +520,7 @@
         '<button class="btn btn--text" data-action="uncheck-all" data-id="' + list.id + '">Tout décocher</button></div></section>';
     } else {
       out += summary(list, e);
-      out += '<div class="segmented" role="group" aria-label="Regrouper les produits par">' +
+      out += '<div class="bgroup" role="group" aria-label="Regrouper les produits par">' +
         segOpt('group', 'priority', 'Priorité', groupBy === 'priority') +
         segOpt('group', 'category', 'Catégorie', groupBy === 'category') + '</div>';
 
@@ -525,12 +550,12 @@
         '<ul class="rows">' + done.sort(function (a, b) { return byName(a.p, b.p); }).map(function (x, i) { return itemRow(list, x.it, x.p, i); }).join('') + '</ul>';
     }
     out += '</div>';
-    if (e.remaining > 0) out += '<button class="fab" data-action="add-items" data-id="' + list.id + '">' + icon('add') + 'Ajouter</button>';
+    if (e.remaining > 0) out += fab('data-action="add-items" data-id="' + list.id + '"', 'Ajouter');
     return out;
   }
 
   function segOpt(action, value, label, pressed) {
-    return '<button class="segmented__opt" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + pressed + '" data-key="' + action + '-' + value + '">' + icon('check') + label + '</button>';
+    return '<button class="bgroup__btn" data-action="' + action + '" data-value="' + value + '" aria-pressed="' + pressed + '" data-key="' + action + '-' + value + '">' + icon('check') + label + '</button>';
   }
 
   function summary(list, e) {
@@ -551,7 +576,6 @@
     if (e.unconverted.length) {
       notes.push('<p class="note-line note-line--error t-body">' + icon('error') + '<span>Prix en ' + h(e.unconverted.join(', ')) + ' non convertis en ' + cur + '. <a href="#/reglages">Ajouter un taux</a></span></p>');
     }
-    var ratio = e.total ? e.done / e.total : 0;
     return '<section class="summary" aria-labelledby="est-title">' +
       '<h2 id="est-title" class="t-label muted">Estimation du reste à acheter</h2>' +
       (e.priced
@@ -559,8 +583,7 @@
         : '<p class="t-title-l muted">Pas encore de prix</p>') +
       (notes.length ? '<div class="summary__notes">' + notes.join('') + '</div>' : '') +
       '<div class="progress"><span class="t-body" id="prog-' + list.id + '">' + e.done + ' sur ' + e.total + ' dans le panier</span>' +
-      '<div class="progress__track" role="progressbar" aria-labelledby="prog-' + list.id + '" aria-valuemin="0" aria-valuemax="' + e.total + '" aria-valuenow="' + e.done + '">' +
-      '<div class="progress__fill" style="transform:scaleX(' + ratio + ')"></div></div></div></section>';
+      progressBar(e.done, e.total, 'prog-' + list.id) + '</div></section>';
   }
 
   function itemRow(list, it, p, i) {
@@ -574,7 +597,7 @@
         (it.qty > 1 ? '<span class="t-body muted num">' + fmtRange(r.min, r.max) + ' l\'unité</span>' : '')
       : '<span class="t-body muted">Sans prix</span>') + '</span>';
     var label = (it.qty > 1 ? it.qty + ' × ' : '') + h(p.name);
-    return '<li style="--i:' + Math.min(i, 12) + '"><div class="row row--tight' + (it.checked ? ' is-done' : '') + '">' +
+    return '<li style="--i:' + Math.min(i, 12) + '" data-flip="it-' + p.id + '"><div class="row row--tight row--top' + (it.checked ? ' is-done' : '') + '">' +
       '<label class="check"><input type="checkbox" data-change="toggle-item" data-list="' + list.id + '" data-product="' + p.id + '"' + (it.checked ? ' checked' : '') +
       ' data-key="chk-' + p.id + '" aria-label="' + h(p.name) + ' : dans le panier"></label>' +
       '<button class="row__btn state" data-action="item-sheet" data-list="' + list.id + '" data-product="' + p.id + '" data-key="item-' + p.id + '">' +
@@ -585,8 +608,7 @@
   /* ===== Vue : Produits (catalogue) ===== */
   function viewProducts() {
     var n = state.products.length;
-    var out = '<div class="page"><header class="page-head"><h1 class="t-headline">Produits</h1>' +
-      (n ? '<p class="t-body muted">' + plural(n, 'produit dans votre catalogue', 'produits dans votre catalogue') + '</p>' : '') + '</header>';
+    var out = appbar({ flex: true, title: 'Produits', sub: n ? plural(n, 'produit dans votre catalogue', 'produits dans votre catalogue') : '' }) + '<div class="page">';
     if (!n) {
       out += emptyState('category', 'Aucun produit enregistré',
         'Ajoutez vos produits habituels une fois : vous les retrouverez à chaque nouvelle liste.',
@@ -602,8 +624,7 @@
       out += '<div class="chips" role="group" aria-label="Filtrer par catégorie">' +
         chip('', 'Toutes', !productCat) + cats.map(function (c) { return chip(c, c, productCat === c); }).join('') + '</div>';
     }
-    out += '<div id="product-results">' + productResults() + '</div></div>' +
-      '<a class="fab" href="#/produit/nouveau">' + icon('add') + 'Nouveau produit</a>';
+    out += '<div id="product-results">' + productResults() + '</div></div>' + fab('data-action="new-product"', 'Nouveau produit');
     return out;
   }
 
@@ -623,11 +644,11 @@
       return '<div class="empty"><p class="t-body muted">Aucun produit ne correspond à « ' + h(productQuery) + ' ».</p>' +
         (productQuery ? '<a class="btn btn--tonal" href="#/produit/nouveau?nom=' + encodeURIComponent(productQuery) + '">' + icon('add') + 'Créer « ' + h(productQuery) + ' »</a>' : '') + '</div>';
     }
-    return '<ul class="rows" aria-label="Résultats">' + list.map(function (p, i) {
+    return (q ? '<h2 class="results-label">Résultats (' + list.length + ')</h2>' : '') + '<ul class="rows" aria-label="Produits">' + list.map(function (p, i) {
       var r = productRange(p);
       var meta = [p.brand, p.format].filter(Boolean).map(h);
       if (p.category && !productCat) meta.push(h(p.category));
-      return '<li style="--i:' + Math.min(i, 12) + '"><a class="row state" href="#/produit/' + p.id + '" data-key="prod-' + p.id + '">' + thumb(p) +
+      return '<li style="--i:' + Math.min(i, 12) + '"><a class="row row--top state" href="#/produit/' + p.id + '" data-key="prod-' + p.id + '">' + thumb(p) +
         '<span class="row__main"><span class="t-title-m">' + h(p.name) + '</span>' +
         (meta.length ? '<span class="t-body muted">' + meta.join(' · ') + '</span>' : '') +
         '<span class="row__price">' + (r.min != null ? '<span class="t-label num">' + fmtRange(r.min, r.max) + '</span>' +
@@ -672,10 +693,11 @@
     var d = draft, err = d.errors;
     var img = draftImageURL();
 
-    var out = '<header class="topbar"><button class="icon-btn" data-action="product-back" aria-label="Retour">' + icon('back') + '</button>' +
-      '<h1 class="topbar__title t-title-l">' + (isNew ? 'Nouveau produit' : 'Modifier le produit') + '</h1>' +
-      (!isNew ? '<button class="icon-btn" data-action="product-menu" aria-label="Plus d\'actions sur le produit" aria-haspopup="menu" data-key="product-menu">' + icon('more') + '</button>' : '') +
-      '</header><div class="page"><form class="form" id="product-form" novalidate>';
+    var out = appbar({
+      back: true, backAction: 'product-back', title: isNew ? 'Nouveau produit' : 'Modifier le produit',
+      actions: !isNew ? '<button class="icon-btn" data-action="product-menu" aria-label="Plus d\'actions sur le produit" aria-haspopup="menu" aria-expanded="false" data-key="product-menu">' + icon('more') + '</button>' : ''
+    }) + '<div class="page"><form class="form" id="product-form" novalidate>' +
+      '<p class="field__help">Les champs marqués <span class="req">*</span> sont obligatoires.</p>';
 
     // Photo (facultative)
     out += '<div class="field"><span class="field__label" id="photo-label">Photo (facultative)</span>';
@@ -704,10 +726,10 @@
       '</select></div>';
 
     // Prix
-    out += '<fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="padding:0;margin-bottom:var(--s-1)">Prix</legend>' +
-      '<p class="field__help" style="margin-bottom:var(--s-3)">Un prix par magasin ou par devise. L\'estimation utilise le moins cher et le plus cher.</p>' +
+    out += '<fieldset class="field" style="border:0;padding:0;margin:0"><legend class="field__label" style="padding:0;margin-bottom:var(--space-050)">Prix</legend>' +
+      '<p class="field__help" style="margin-bottom:var(--space-150)">Un prix par magasin ou par devise. L\'estimation utilise le moins cher et le plus cher.</p>' +
       '<div class="price-rows">' + d.prices.map(function (pr, i) { return priceRow(pr, i, err['price-' + i]); }).join('') + '</div>' +
-      '<div style="margin-top:var(--s-3)"><button type="button" class="btn btn--tonal" data-action="add-price" data-key="add-price">' + icon('add') + 'Ajouter un prix</button></div></fieldset>';
+      '<div style="margin-top:var(--space-150)"><button type="button" class="btn btn--tonal" data-action="add-price" data-key="add-price">' + icon('add') + 'Ajouter un prix</button></div></fieldset>';
 
     out += '<div class="field"><label class="field__label" for="f-note">Note</label>' +
       '<textarea class="textarea" id="f-note" data-input="field" data-field="note" placeholder="Ex. sans parfum, flacon bleu, rayon pharmacie" aria-describedby="f-note-help">' + h(d.note) + '</textarea>' +
@@ -715,7 +737,7 @@
 
     if (!isNew) out += '<div><button type="button" class="btn btn--text btn--danger" data-action="delete-product">' + icon('delete') + 'Supprimer le produit</button></div>';
     out += '</form></div>' +
-      '<div class="action-bar"><button type="submit" form="product-form" class="btn btn--filled btn--block">' + icon('check') +
+      '<div class="action-bar"><button type="submit" form="product-form" class="btn btn--filled btn--m btn--block">' + icon('check') +
       (d.listId && isNew ? 'Enregistrer et ajouter à la liste' : 'Enregistrer') + '</button></div>';
     return out;
   }
@@ -725,10 +747,10 @@
     var described = [];
     if (o.error) described.push(id + '-err'); else if (o.help) described.push(id + '-help');
     return '<div class="field"><label class="field__label" for="' + id + '">' + label + (o.required ? ' <span class="req" aria-hidden="true">*</span>' : '') + '</label>' +
-      '<input class="input" id="' + id + '" data-input="field" data-field="' + field + '" value="' + h(value) + '"' +
+      (o.error ? '<span class="input-wrap">' : '') + '<input class="input" id="' + id + '" data-input="field" data-field="' + field + '" value="' + h(value) + '"' +
       (o.placeholder ? ' placeholder="' + h(o.placeholder) + '"' : '') + (o.required ? ' required aria-required="true"' : '') +
       (o.autocomplete ? ' autocomplete="' + o.autocomplete + '"' : '') +
-      (o.error ? ' aria-invalid="true"' : '') + (described.length ? ' aria-describedby="' + described.join(' ') + '"' : '') + ' data-key="' + id + '">' +
+      (o.error ? ' aria-invalid="true"' : '') + (described.length ? ' aria-describedby="' + described.join(' ') + '"' : '') + ' data-key="' + id + '">' + (o.error ? icon('error') + '</span>' : '') +
       (o.error ? '<span class="field__error" id="' + id + '-err">' + icon('error') + h(o.error) + '</span>'
         : (o.help ? '<span class="field__help" id="' + id + '-help">' + h(o.help) + '</span>' : '')) + '</div>';
   }
@@ -764,7 +786,7 @@
     var out = '<div class="page"><header class="page-head"><h1 class="t-headline">Réglages</h1></header>';
 
     out += '<section class="section" aria-labelledby="set-theme"><h2 id="set-theme" class="section__title t-label">Apparence</h2><div class="section__body">' +
-      '<div class="segmented segmented--flush" role="group" aria-label="Thème">' +
+      '<div class="bgroup bgroup--flush" role="group" aria-label="Thème">' +
       segOpt('theme', 'system', 'Système', s.theme === 'system') + segOpt('theme', 'light', 'Jour', s.theme === 'light') + segOpt('theme', 'dark', 'Nuit', s.theme === 'dark') +
       '</div><p class="field__help">« Système » suit le réglage de votre téléphone.</p></div></section>';
 
@@ -820,6 +842,28 @@
   var overlays = [];
   var ignorePop = 0;
   var afterPop = [];
+  var guardActive = false;
+
+  /* Formulaire modifié : le retour système demande confirmation (comme un full-screen dialog) */
+  function markDirty() {
+    if (!draft) return;
+    draft.dirty = true;
+    if (!guardActive) {
+      try { history.pushState({ trousseGuard: true }, ''); guardActive = true; } catch (e) {}
+    }
+  }
+  function leaveForm(fn) {
+    if (guardActive) { guardActive = false; ignorePop++; afterPop.push(fn); history.back(); }
+    else fn();
+  }
+  function confirmDiscard() {
+    openDialog({
+      title: 'Abandonner les modifications ?', text: 'Les changements apportés à ce produit ne seront pas enregistrés.',
+      confirm: 'Abandonner', cancel: 'Continuer la saisie', danger: true,
+      onConfirm: function () { leaveForm(function () { draft = null; goBack('/produits'); }); },
+      onCancel: function () { markDirty(); }
+    });
+  }
 
   function pushHistory(ov) {
     try { history.pushState({ trousseOverlay: true }, ''); ov.pushed = true; } catch (e) { ov.pushed = false; }
@@ -861,31 +905,37 @@
       fns.forEach(function (fn) { fn(); });
       return;
     }
-    if (overlays.length) closeOverlay(topOverlay(), { fromPop: true });
+    if (overlays.length) { var top = topOverlay(); closeOverlay(top, { fromPop: true, then: top.cancelThen }); return; }
+    if (guardActive && draft && draft.dirty) { guardActive = false; confirmDiscard(); }
   });
 
-  /* Feuille du bas (bottom sheet) */
+  /* Feuille du bas modale : position initiale ≤ 50 %, extensible au plein écran ; side sheet en expanded */
   function openSheet(o) {
     var root = $('#overlay-root');
     var titleId = 'sheet-' + uid();
     var scrim = document.createElement('div');
     scrim.className = 'scrim';
     var el = document.createElement('div');
-    el.className = 'sheet' + (o.full ? ' sheet--full' : '');
+    el.className = 'sheet';
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-modal', 'true');
     el.setAttribute('aria-labelledby', titleId);
     el.tabIndex = -1;
-    el.innerHTML = '<div class="sheet__handle" data-drag aria-hidden="true"></div><div class="sheet__content">' +
-      '<div class="sheet__head"><h2 class="t-title-l" id="' + titleId + '"></h2>' +
+    el.innerHTML = '<button type="button" class="sheet__handle" aria-label="Agrandir la feuille" data-key="sheet-handle"></button><div class="sheet__content">' +
+      '<div class="sheet__head"><h2 id="' + titleId + '"></h2>' +
       '<button class="icon-btn" data-action="close-overlay" aria-label="Fermer">' + icon('close') + '</button></div>' +
       (o.head ? '<div class="sheet__extra">' + o.head() + '</div>' : '') +
       '<div class="sheet__body"></div>' + (o.foot ? '<div class="sheet__foot"></div>' : '') + '</div>';
     root.appendChild(scrim);
     root.appendChild(el);
+    var handle = $('.sheet__handle', el);
 
     var ov = {
       type: 'sheet', el: el, trigger: document.activeElement, ctx: o.ctx || {}, onClose: o.onClose,
+      setExpanded: function (v) {
+        el.classList.toggle('is-expanded', v);
+        handle.setAttribute('aria-label', v ? 'Réduire la feuille' : 'Agrandir la feuille');
+      },
       refresh: function () {
         var body = $('.sheet__body', el);
         var active = document.activeElement;
@@ -903,16 +953,19 @@
       },
       teardown: function () {
         scrim.classList.remove('is-open');
+        el.style.translate = '';
         el.classList.add('is-closing');
         var done = function () { scrim.remove(); el.remove(); };
-        if (reducedMotion()) done(); else setTimeout(done, 220);
+        if (reducedMotion()) setTimeout(done, 160); else setTimeout(done, 360);
       }
     };
     ov.refresh();
     overlays.push(ov);
     pushHistory(ov);
     scrim.addEventListener('click', function () { closeOverlay(ov); });
-    enableDrag(ov);
+    // Une saisie au clavier a besoin de place : la feuille s'étend
+    el.addEventListener('focusin', function (e) { if (e.target.matches('input:not([type="checkbox"]), textarea, select')) ov.setExpanded(true); });
+    enableDrag(ov, handle);
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
         scrim.classList.add('is-open');
@@ -924,27 +977,53 @@
     return ov;
   }
 
-  /* Glisser la poignée vers le bas pour fermer */
-  function enableDrag(ov) {
-    var handle = $('[data-drag]', ov.el);
-    var startY = 0, dy = 0, dragging = false, t0 = 0;
+  /* Spring réel (geste) : stiffness 700, amortissement 0,9 — schéma standard */
+  function springBack(el, from, v0) {
+    if (reducedMotion() || !isFinite(from)) { el.style.translate = ''; return; }
+    var x = from, v = v0 * 1000, k = 700, c = 2 * 0.9 * Math.sqrt(k), last = performance.now();
+    (function step(now) {
+      var dt = Math.min(0.032, (now - last) / 1000); last = now;
+      v += (-k * x - c * v) * dt; x += v * dt;
+      if (Math.abs(x) < 0.5 && Math.abs(v) < 8) { el.style.translate = ''; return; }
+      el.style.translate = '0 ' + x.toFixed(2) + 'px';
+      requestAnimationFrame(step);
+    })(last);
+  }
+
+  /* Poignée : toucher ou Entrée/Espace = basculer la hauteur ; glisser = étendre, réduire ou fermer */
+  function enableDrag(ov, handle) {
+    var el = ov.el, startY = 0, dy = 0, dragging = false, moved = false, lastY = 0, lastT = 0, vel = 0;
+    handle.addEventListener('click', function () {
+      if (moved) { moved = false; return; }
+      ov.setExpanded(!el.classList.contains('is-expanded'));
+    });
     handle.addEventListener('pointerdown', function (e) {
-      dragging = true; startY = e.clientY; dy = 0; t0 = performance.now();
-      ov.el.style.transition = 'none';
+      dragging = true; moved = false; startY = lastY = e.clientY; lastT = performance.now(); dy = 0; vel = 0;
+      el.style.transition = 'none';
       handle.setPointerCapture(e.pointerId);
     });
     handle.addEventListener('pointermove', function (e) {
       if (!dragging) return;
-      dy = Math.max(0, e.clientY - startY);
-      ov.el.style.transform = 'translateY(' + dy + 'px)';
+      var now = performance.now();
+      vel = (e.clientY - lastY) / Math.max(1, now - lastT);
+      lastY = e.clientY; lastT = now;
+      dy = e.clientY - startY;
+      if (Math.abs(dy) > 4) moved = true;
+      var shown = dy < 0 ? dy / 3 : dy; // résistance vers le haut
+      el.style.translate = '0 ' + shown + 'px';
     });
     function end() {
       if (!dragging) return;
       dragging = false;
-      ov.el.style.transition = '';
-      ov.el.style.transform = '';
-      var velocity = dy / Math.max(1, performance.now() - t0);
-      if (dy > 96 || velocity > 0.6) closeOverlay(ov);
+      el.style.transition = '';
+      if (!moved) { el.style.translate = ''; return; }
+      var expanded = el.classList.contains('is-expanded');
+      var current = dy < 0 ? dy / 3 : dy;
+      if (dy < -40 || vel < -0.5) { ov.setExpanded(true); springBack(el, current, vel); }
+      else if (dy > 96 || vel > 0.6) {
+        if (expanded && dy < 240) { ov.setExpanded(false); springBack(el, current, vel); }
+        else closeOverlay(ov);
+      } else springBack(el, current, vel);
     }
     handle.addEventListener('pointerup', end);
     handle.addEventListener('pointercancel', end);
@@ -962,7 +1041,7 @@
     el.setAttribute('aria-modal', 'true');
     el.setAttribute('aria-labelledby', id + '-t');
     el.setAttribute('aria-describedby', id + '-d');
-    el.innerHTML = '<h2 class="t-headline" style="font-size:1.5rem;line-height:2rem" id="' + id + '-t">' + h(o.title) + '</h2>' +
+    el.innerHTML = '<h2 id="' + id + '-t">' + h(o.title) + '</h2>' +
       '<p class="t-body muted" id="' + id + '-d">' + h(o.text) + '</p>' +
       '<div class="dialog__actions"><button class="btn btn--text" data-dlg="cancel">' + h(o.cancel || 'Annuler') + '</button>' +
       '<button class="btn btn--text' + (o.danger ? ' btn--danger' : '') + '" data-dlg="ok">' + h(o.confirm) + '</button></div>';
@@ -975,21 +1054,23 @@
         setTimeout(function () { scrim.remove(); el.remove(); }, reducedMotion() ? 0 : 200);
       }
     };
+    ov.cancelThen = o.onCancel;
+    ov.cancel = function () { closeOverlay(ov, o.onCancel ? { then: o.onCancel } : undefined); };
     overlays.push(ov);
     pushHistory(ov);
-    scrim.addEventListener('click', function () { closeOverlay(ov); });
+    scrim.addEventListener('click', ov.cancel);
     el.addEventListener('click', function (e) {
       var b = e.target.closest('[data-dlg]');
       if (!b) return;
       if (b.getAttribute('data-dlg') === 'ok') closeOverlay(ov, { then: o.onConfirm });
-      else closeOverlay(ov);
+      else ov.cancel();
     });
     requestAnimationFrame(function () { scrim.classList.add('is-open'); el.classList.add('is-open'); });
     $('[data-dlg="cancel"]', el).focus();
     return ov;
   }
 
-  /* Menu contextuel */
+  /* Menu : se déploie depuis son déclencheur, divider avant l'action destructive, navigation par lettre */
   function openMenu(anchor, items) {
     var root = $('#overlay-root');
     var catcher = document.createElement('div');
@@ -997,19 +1078,27 @@
     var el = document.createElement('div');
     el.className = 'menu';
     el.setAttribute('role', 'menu');
+    var seenDanger = false;
     el.innerHTML = items.map(function (it, i) {
-      return '<button class="menu__item' + (it.danger ? ' menu__item--danger' : '') + '" role="menuitem" data-mi="' + i + '" tabindex="-1">' + icon(it.icon) + h(it.label) + '</button>';
+      var sep = it.danger && !seenDanger && i > 0 ? '<hr class="menu__divider" role="separator">' : '';
+      if (it.danger) seenDanger = true;
+      return sep + '<button class="menu__item' + (it.danger ? ' menu__item--danger' : '') + '" role="menuitem" data-mi="' + i + '" tabindex="-1">' + icon(it.icon) + h(it.label) + '</button>';
     }).join('');
     root.appendChild(catcher);
     root.appendChild(el);
     var rect = anchor.getBoundingClientRect();
-    el.style.top = Math.min(rect.bottom + 4, window.innerHeight - el.offsetHeight - 8) + 'px';
+    var mh = el.offsetHeight;
+    var below = rect.bottom + 4;
+    if (below + mh > window.innerHeight - 8 && rect.top - mh - 4 > 8) { el.style.top = (rect.top - mh - 4) + 'px'; el.classList.add('is-up'); }
+    else el.style.top = Math.max(8, Math.min(below, window.innerHeight - mh - 8)) + 'px';
     el.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+    anchor.setAttribute('aria-expanded', 'true');
     var ov = {
       type: 'menu', el: el, trigger: anchor,
-      teardown: function () { catcher.remove(); el.remove(); }
+      teardown: function () { anchor.setAttribute('aria-expanded', 'false'); catcher.remove(); el.remove(); }
     };
     overlays.push(ov);
+    pushHistory(ov);
     catcher.addEventListener('click', function () { closeOverlay(ov); });
     el.addEventListener('click', function (e) {
       var b = e.target.closest('[data-mi]');
@@ -1025,6 +1114,13 @@
       else if (e.key === 'Home') { e.preventDefault(); btns[0].focus(); }
       else if (e.key === 'End') { e.preventDefault(); btns[btns.length - 1].focus(); }
       else if (e.key === 'Tab') { e.preventDefault(); closeOverlay(ov); }
+      else if (e.key.length === 1 && /\S/.test(e.key)) {
+        var letter = norm(e.key);
+        for (var k = 1; k <= btns.length; k++) {
+          var b = btns[(idx + k) % btns.length];
+          if (norm(b.textContent.replace(/^\S+/, '').trim()).indexOf(letter) === 0) { b.focus(); break; }
+        }
+      }
     });
     requestAnimationFrame(function () { el.classList.add('is-open'); });
     $('.menu__item', el).focus();
@@ -1075,24 +1171,97 @@
     }
   }
 
-  /* ---------- Snackbar ---------- */
-  var snackTimer = null;
+  /* ---------- Snackbar : avec action = reste jusqu'à l'action ou la fermeture ; sans action = 6 s ---------- */
+  var snackTimer = null, snackTrigger = null;
   function snackbar(text, action) {
     var el = $('#snackbar');
     clearTimeout(snackTimer);
+    snackTrigger = document.activeElement;
     el.classList.remove('is-open');
     el.innerHTML = '<span class="snackbar__text">' + h(text) + '</span>' +
-      (action ? '<button class="btn btn--text" data-snack>' + h(action.label) + '</button>' : '');
-    var btn = $('[data-snack]', el);
-    if (btn) btn.addEventListener('click', function () { hideSnack(); action.run(); });
+      (action ? '<button class="btn btn--text" data-snack>' + h(action.label) + '</button>' +
+        '<button class="icon-btn" data-snack-close aria-label="Fermer la notification">' + icon('close') + '</button>' : '');
+    var btn = $('[data-snack]', el), close = $('[data-snack-close]', el);
+    if (btn) btn.addEventListener('click', function () { hideSnack(true); action.run(); });
+    if (close) close.addEventListener('click', function () { hideSnack(true); });
     requestAnimationFrame(function () { el.classList.add('is-open'); });
-    snackTimer = setTimeout(hideSnack, action ? 8000 : 4000);
+    if (!action) snackTimer = setTimeout(function () { hideSnack(false); }, 6000);
   }
-  function hideSnack() {
+  function hideSnack(returnFocus) {
     var el = $('#snackbar');
+    var had = el.contains(document.activeElement);
     el.classList.remove('is-open');
-    setTimeout(function () { if (!el.classList.contains('is-open')) el.innerHTML = ''; }, 300);
+    setTimeout(function () { if (!el.classList.contains('is-open')) el.innerHTML = ''; }, 360);
+    if ((returnFocus || had) && snackTrigger && document.contains(snackTrigger)) snackTrigger.focus({ preventScroll: true });
   }
+
+  /* Annonce polie pour les lecteurs d'écran */
+  function announce(msg) {
+    var a = $('#announcer');
+    if (!a) return;
+    a.textContent = '';
+    setTimeout(function () { a.textContent = msg; }, 60);
+  }
+
+  /* ---------- Plain tooltip des icon buttons (survol, focus clavier, appui long) ---------- */
+  var tipEl = null, tipTimer = null, tipHide = null, longPressed = false;
+  function showTip(target) {
+    var text = target.getAttribute('aria-label');
+    if (!text || !document.contains(target)) return;
+    if (!tipEl) {
+      tipEl = document.createElement('div');
+      tipEl.className = 'tooltip';
+      tipEl.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(tipEl);
+    }
+    clearTimeout(tipHide);
+    tipEl.textContent = text;
+    var r = target.getBoundingClientRect();
+    var w = tipEl.offsetWidth, th = tipEl.offsetHeight;
+    var below = !!target.closest('.appbar, .viewer__bar, .sheet__head');
+    var top = below ? r.bottom + 4 : r.top - th - 4;
+    if (top < 8) top = r.bottom + 4;
+    if (top + th > window.innerHeight - 8) top = r.top - th - 4;
+    tipEl.style.top = top + 'px';
+    tipEl.style.left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 8)) + 'px';
+    tipEl.classList.add('is-open');
+  }
+  function hideTip(delay) {
+    clearTimeout(tipTimer);
+    clearTimeout(tipHide);
+    tipHide = setTimeout(function () { if (tipEl) tipEl.classList.remove('is-open'); }, delay || 0);
+  }
+  document.addEventListener('pointerover', function (e) {
+    var t = e.target.closest && e.target.closest('.icon-btn[aria-label]');
+    if (!t || e.pointerType !== 'mouse') return;
+    clearTimeout(tipTimer);
+    tipTimer = setTimeout(function () { showTip(t); }, 500);
+  });
+  document.addEventListener('pointerout', function (e) {
+    var t = e.target.closest && e.target.closest('.icon-btn[aria-label]');
+    if (t && e.pointerType === 'mouse' && !t.contains(e.relatedTarget)) hideTip(1500);
+  });
+  document.addEventListener('pointerdown', function (e) {
+    var t = e.target.closest && e.target.closest('.icon-btn[aria-label]');
+    if (!t || e.pointerType === 'mouse') return;
+    clearTimeout(tipTimer);
+    tipTimer = setTimeout(function () { longPressed = true; showTip(t); }, 500);
+  });
+  ['pointerup', 'pointercancel'].forEach(function (type) {
+    document.addEventListener(type, function (e) {
+      if (e.pointerType === 'mouse') return;
+      clearTimeout(tipTimer);
+      if (longPressed) hideTip(1500);
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (longPressed) { longPressed = false; e.preventDefault(); e.stopPropagation(); }
+  }, true);
+  document.addEventListener('focusin', function (e) {
+    var t = e.target;
+    if (t.matches && t.matches('.icon-btn[aria-label]') && t.matches(':focus-visible')) showTip(t);
+  });
+  document.addEventListener('focusout', function (e) { if (e.target.matches && e.target.matches('.icon-btn')) hideTip(0); });
 
   /* =========================================================
      Feuilles métier
@@ -1111,7 +1280,7 @@
           (form.error ? ' aria-invalid="true" aria-describedby="list-name-err"' : '') + '>' +
           (form.error ? '<span class="field__error" id="list-name-err">' + icon('error') + h(form.error) + '</span>' : '') + '</div>' +
           (isNew ? '<div class="chips chips--wrap" role="group" aria-label="Suggestions de nom">' + LIST_SUGGESTIONS.map(function (s) {
-            return '<button class="chip" data-action="list-suggest" data-value="' + h(s) + '" aria-pressed="' + (form.name === s) + '">' + icon('check') + h(s) + '</button>';
+            return '<button class="chip" data-action="list-suggest" data-value="' + h(s) + '">' + h(s) + '</button>';
           }).join('') + '</div>' : '') +
           '<div class="field"><label class="field__label" for="list-budget">Budget (facultatif)</label>' +
           '<div class="rate-row" style="grid-template-columns:minmax(0,1fr) auto"><input class="input num" id="list-budget" inputmode="decimal" data-input="list-form" data-field="budget" value="' + h(form.budget) + '" placeholder="Ex. 50" enterkeyhint="done" data-key="list-budget"' +
@@ -1165,7 +1334,6 @@
     if (!list) return;
     var ctx = { kind: 'add', listId: listId, q: '' };
     var ov = openSheet({
-      full: true,
       title: function () { return 'Ajouter à « ' + list.name + ' »'; },
       head: function () {
         return '<div class="search" role="search">' + icon('search') +
@@ -1247,8 +1415,8 @@
           }).join('') + '</ul>'
           : '<p class="t-body muted">Aucun prix enregistré. Ajoutez-en depuis la fiche du produit pour l\'inclure dans l\'estimation.</p>';
         return '<div class="sheet__pad">' +
-          '<div style="display:flex;gap:var(--s-4);align-items:center">' +
-          '<button class="state" data-action="show-product" data-product="' + p.id + '" aria-label="Montrer la photo de ' + h(p.name) + '" style="border:0;padding:0;background:none;border-radius:var(--r-lg)" data-key="item-thumb">' + thumb(p, true) + '</button>' +
+          '<div style="display:flex;gap:var(--space-200);align-items:center">' +
+          '<button class="state" data-action="show-product" data-product="' + p.id + '" aria-label="Montrer la photo de ' + h(p.name) + '" style="border:0;padding:0;background:none;border-radius:var(--shape-lg)" data-key="item-thumb">' + thumb(p, true) + '</button>' +
           '<div class="row__main">' + (meta ? '<span class="t-body muted">' + meta + '</span>' : '') +
           (p.note ? '<span class="t-body">' + h(p.note) + '</span>' : '') + '</div></div>' +
           '<div class="field"><span class="field__label" id="qty-l">Quantité</span>' +
@@ -1257,7 +1425,7 @@
           '<span class="stepper__value" aria-live="polite">' + it.qty + '</span>' +
           '<button class="icon-btn icon-btn--tonal" data-action="item-qty" data-delta="1" aria-label="Augmenter la quantité" data-key="iq-inc">' + icon('add') + '</button></span></div>' +
           '<div class="field"><span class="field__label" id="prio-l">Priorité</span>' +
-          '<div class="segmented segmented--flush" role="group" aria-labelledby="prio-l">' +
+          '<div class="bgroup bgroup--flush" role="group" aria-labelledby="prio-l">' +
           [1, 2, 3].map(function (pr) { return segOpt('item-prio', String(pr), PRIORITIES[pr].label, it.priority === pr); }).join('') + '</div></div>' +
           '<div class="field"><span class="field__label">Prix' + (it.qty > 1 && r.min != null ? ' · total ' + fmtRange(r.min * it.qty, r.max * it.qty) : '') + '</span>' + prices + '</div>' +
           '<div class="photo__actions" style="margin:0">' +
@@ -1366,7 +1534,7 @@
       save();
       deleteImage(id);
       draft = null;
-      goBack('/produits');
+      leaveForm(function () { goBack('/produits'); });
       snackbar('« ' + p.name + ' » supprimé', {
         label: 'Annuler', run: function () {
           restore(snap);
@@ -1417,13 +1585,11 @@
     save();
     if (d.imageURL) URL.revokeObjectURL(d.imageURL);
     draft = null;
-    if (isNew && list) {
-      goBack('/liste/' + list.id);
-      snackbar('« ' + p.name + ' » ajouté à la liste');
-    } else {
-      goBack('/produits');
-      snackbar(isNew ? 'Produit enregistré' : 'Modifications enregistrées');
-    }
+    var msg = isNew && list ? '« ' + p.name + ' » ajouté à la liste' : (isNew ? 'Produit enregistré' : 'Modifications enregistrées');
+    leaveForm(function () {
+      goBack(isNew && list ? '/liste/' + list.id : '/produits');
+      snackbar(msg);
+    });
   }
 
   var actions = {
@@ -1445,7 +1611,6 @@
       openMenu(el, [
         { label: 'Modifier le nom ou le budget', icon: 'edit', run: function () { openListSheet(list); } },
         { label: 'Dupliquer', icon: 'copy', run: function () { duplicateList(list); } },
-        { label: 'Partager en texte', icon: 'share', run: function () { shareList(list); } },
         list.archived
           ? { label: 'Remettre en cours', icon: 'unarchive', run: function () { list.archived = false; list.archivedAt = null; touch(list); save(); render(); snackbar('Liste remise en cours'); } }
           : { label: 'Terminer la liste', icon: 'archive', run: function () { actions['archive-list'](el); } },
@@ -1579,14 +1744,11 @@
       if (i) i.focus();
     },
     'product-back': function () {
-      if (draft && draft.dirty) {
-        openDialog({
-          title: 'Abandonner les modifications ?', text: 'Les changements apportés à ce produit ne seront pas enregistrés.',
-          confirm: 'Abandonner', cancel: 'Continuer la saisie', danger: true,
-          onConfirm: function () { draft = null; goBack('/produits'); }
-        });
-      } else { draft = null; goBack('/produits'); }
+      if (draft && draft.dirty) confirmDiscard();
+      else leaveForm(function () { draft = null; goBack('/produits'); });
     },
+    'new-product': function () { go('/produit/nouveau'); },
+    'share-list': function (el) { var l = getList(el.getAttribute('data-id')); if (l) shareList(l); },
     'product-menu': function (el) {
       if (!draft || !draft.id) return;
       var id = draft.id;
@@ -1600,7 +1762,7 @@
       if (!draft) return;
       var last = draft.prices[draft.prices.length - 1];
       draft.prices.push({ id: uid(), amount: '', currency: last ? last.currency : state.settings.currency, shop: '' });
-      draft.dirty = true;
+      markDirty();
       var id = draft.prices[draft.prices.length - 1].id;
       render();
       var input = $('[data-key="pa-' + id + '"]');
@@ -1610,7 +1772,7 @@
       if (!draft) return;
       draft.prices.splice(+el.getAttribute('data-index'), 1);
       draft.errors = {};
-      draft.dirty = true;
+      markDirty();
       render();
       var btn = $('[data-key="add-price"]');
       if (btn) btn.focus();
@@ -1620,7 +1782,7 @@
       if (draft.imageURL) URL.revokeObjectURL(draft.imageURL);
       draft.imageURL = null;
       draft.image = null;
-      draft.dirty = true;
+      markDirty();
       render();
     },
     'theme': function (el) {
@@ -1653,6 +1815,7 @@
 
   /* Changements (cases, fichiers, sélecteurs) */
   var toggleTimer = null;
+  var searchTimer = null;
   var changes = {
     'toggle-item': function (el) {
       var list = getList(el.getAttribute('data-list'));
@@ -1661,6 +1824,8 @@
       it.checked = el.checked;
       if (el.checked) el.classList.add('pop');
       touch(list); save();
+      var pr = getProduct(it.productId), es = estimate(list);
+      announce((pr ? pr.name : 'Produit') + (it.checked ? ' : dans le panier, déplacé en bas. ' : ' : remis à acheter. ') + es.done + ' sur ' + es.total + '.');
       clearTimeout(toggleTimer);
       // Laisse la case s'écraser puis rebondir avant de déplacer la ligne
       toggleTimer = setTimeout(function () { render(); }, reducedMotion() ? 0 : 320);
@@ -1675,7 +1840,7 @@
         if (d.imageURL) URL.revokeObjectURL(d.imageURL);
         d.image = blob;
         d.imageURL = URL.createObjectURL(blob);
-        d.dirty = true;
+        markDirty();
         render();
       });
     },
@@ -1719,7 +1884,7 @@
     'field': function (el) {
       if (!draft) return;
       draft[el.getAttribute('data-field')] = el.value;
-      draft.dirty = true;
+      markDirty();
       if (el.getAttribute('data-field') === 'name' && draft.errors.name && el.value.trim()) {
         delete draft.errors.name;
         el.removeAttribute('aria-invalid');
@@ -1732,12 +1897,17 @@
       var pr = draft.prices[+el.getAttribute('data-index')];
       if (!pr) return;
       pr[el.getAttribute('data-pf')] = el.value;
-      draft.dirty = true;
+      markDirty();
     },
     'product-q': function (el) {
       productQuery = el.value;
       var res = $('#product-results');
       if (res) res.innerHTML = productResults();
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        var c = $all('#product-results .rows > li').length;
+        announce(c ? plural(c, 'produit trouvé', 'produits trouvés') : 'Aucun produit trouvé');
+      }, 600);
       var clear = $('[data-action="clear-product-q"]');
       if (clear) clear.hidden = !productQuery;
     },
@@ -1752,11 +1922,6 @@
       var c = sheetCtx();
       if (!c.form) return;
       c.form[el.getAttribute('data-field')] = el.value;
-      if (el.getAttribute('data-field') === 'name') {
-        $all('[data-action="list-suggest"]', topOverlay().el).forEach(function (b) {
-          b.setAttribute('aria-pressed', String(b.getAttribute('data-value') === el.value));
-        });
-      }
     }
   };
 
@@ -1839,10 +2004,32 @@
 
   document.addEventListener('keydown', function (e) {
     var ov = topOverlay();
-    if (e.key === 'Escape' && ov) { e.preventDefault(); closeOverlay(ov); return; }
+    var snack = $('#snackbar');
+    if (e.key === 'Escape' && snack.contains(document.activeElement)) { e.preventDefault(); hideSnack(true); return; }
+    if (e.key === 'Escape' && ov) { e.preventDefault(); if (ov.cancel) ov.cancel(); else closeOverlay(ov); return; }
+    if (e.altKey && (e.key === 'g' || e.key === 'G') && snack.classList.contains('is-open')) {
+      var sb = $('button', snack);
+      if (sb) { e.preventDefault(); sb.focus(); }
+      return;
+    }
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && e.target.closest && e.target.closest('.rows')) {
+      var tg = e.target;
+      var sel = tg.matches('input[type="checkbox"]') ? 'input[type="checkbox"]' : (tg.matches('a.row, button.row, .row__btn') ? 'a.row, button.row, .row__btn' : null);
+      if (sel) {
+        var scope = (ov && ov.el.contains(tg)) ? ov.el : $('#main');
+        var all = $all('.rows ' + sel.split(', ').join(', .rows '), scope);
+        var at = all.indexOf(tg);
+        if (at >= 0 && all.length > 1) {
+          e.preventDefault();
+          all[(at + (e.key === 'ArrowDown' ? 1 : all.length - 1)) % all.length].focus();
+          return;
+        }
+      }
+    }
     if (e.key === 'Enter') {
       var t = e.target;
       if (t.matches && t.matches('[data-input="list-form"]')) { e.preventDefault(); actions['submit-list'](); return; }
+      if (t.id === 'product-q') { t.blur(); return; }
       if (t.id === 'add-q') {
         e.preventDefault();
         var quick = ov && $('[data-action="quick-create"]', ov.el);
@@ -1866,6 +2053,8 @@
   window.addEventListener('hashchange', function () {
     // Ferme les superpositions éventuellement restées ouvertes
     while (overlays.length) { var ov = overlays.pop(); ov.teardown(); }
+    hideTip(0);
+    if (parseRoute().view !== 'produit') guardActive = false;
     var r = parseRoute();
     var prev = routeStack[routeStack.length - 1];
     var isBack = routeStack.length > 1 && routeStack[routeStack.length - 2].full === r.full;

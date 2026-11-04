@@ -298,3 +298,48 @@ Transitions de page : fondu entre destinations principales (pas de lien hiérarc
 - La priorité n'est jamais portée par la couleur : titre de groupe, icône et texte.
 - Texte agrandissable à 200 % : conteneurs qui grandissent, retour à la ligne plutôt que troncature pour les noms de produits.
 - Annonces : snackbar en `role="status"` ; progression et estimation lisibles par les lecteurs d'écran.
+
+---
+
+## 10. Deuxième passe : audit complet du skill material-design
+
+La première version s'appuyait sur les fondations, la composition et le noyau de style. Cette passe a lu le reste (couleur, typographie, élévation, forme, motion, icônes, et les fiches des composants utilisés) et corrigé chaque écart. Classement par gravité, comme le demande le skill.
+
+### 10.1 Accessibilité et usage (bloquant)
+
+| Écart | Correction |
+|---|---|
+| Poignée de la feuille du bas décorative, 36 px | Vrai bouton 48 dp, libellé d'action (« Agrandir / Réduire la feuille »), Entrée ou Espace bascule la hauteur |
+| Snackbar avec « Annuler » qui disparaissait seule | Reste affichée jusqu'à l'action ou la fermeture (bouton « Fermer la notification ») ; sans action : 6 s. Échap la ferme, Alt+G y amène le focus, le focus revient au déclencheur |
+| Retour système Android sur un formulaire modifié : perte silencieuse | Le retour ouvre « Abandonner les modifications ? », comme un dialogue plein écran |
+| Cocher une ligne la déplaçait en bas sans rien dire au lecteur d'écran | Annonce polie : « Shampooing : dans le panier, déplacé en bas. 2 sur 3. » |
+| Recherche et filtres muets | Nombre de résultats annoncé après la frappe |
+| Icon buttons sans info-bulle | Plain tooltip au survol (0,5 s), au focus clavier et à l'appui long |
+| Menus sans état ni navigation complète | `aria-expanded` sur le déclencheur, flèches, Début/Fin, navigation par lettre, séparateur avant l'action destructive |
+| Listes longues au clavier | Flèches haut/bas entre les cases à cocher et entre les lignes |
+| Champs en erreur signalés par la couleur seule | Icône d'erreur dans le champ + message ; mention « * obligatoire » en tête de formulaire |
+
+### 10.2 Composants (cohérence avec M3 Expressive)
+
+- **Segmented buttons → connected button groups** (déconseillés en M3 Expressive) : Priorité / Catégorie, Urgent / Normal / Plus tard, Système / Jour / Nuit. Boutons séparés de 2 dp, coins intérieurs 8 dp, le bouton choisi prend la forme pleine ronde avec une coche.
+- **Feuille du bas modale** : s'ouvre à 50 % maximum, s'étend au plein écran (marge haute 72 dp) par la poignée, un glissement vers le haut ou dès qu'un champ prend le focus (le clavier a besoin de place). Glisser vers le bas réduit, puis ferme. Au relâchement, retour par un vrai ressort physique (raideur 700, amortissement 0,9).
+- **≥ 840 dp** : la feuille devient une *modal side sheet* à droite ; la barre de navigation devient un rail avec le FAB en tête.
+- **App bar** : *medium flexible* (titre sous la barre) qui se comprime en *small* au défilement ; la fiche produit utilise la même barre.
+- **FAB** : *small extended* 56 dp qui se replie en FAB icône quand on fait défiler vers le bas, se redéploie vers le haut. Sur Produits, c'est un bouton qui ouvre la création.
+- **Navigation bar** : *flexible navigation bar* 64 dp, icône remplie (axe FILL) seulement sur la destination active.
+- **Indicateur de progression** : linéaire déterminé, piste 4 dp, espace entre la partie remplie et le reste, point d'arrêt en bout.
+- **Chips de suggestion** (nom de liste) : plus de coche ni d'état pressé, l'action remplit le champ.
+- **Dialogue** : apparition en fondu, largeur 280–560 dp, annulation explicite (Échap, scrim et bouton ont le même effet).
+- **Bouton principal du formulaire** : taille M (56 dp), largeur limitée sur grand écran.
+
+### 10.3 Système de style
+
+- **Couleur** : schéma *Tonal Spot* calculé avec Material Color Utilities depuis la couleur source #00696B (script `tokens-couleur.mjs`), tokens ref → sys, thème contraste élevé automatique (`prefers-contrast: more`). Exception assumée et documentée : la surface reste #FFFFFF le jour et #000000 la nuit pour tenir la règle 60-30-10.
+- **Typographie** : tokens composites par rôle (police, taille, interligne, graisse, approche), variantes *emphasized* pour les montants et titres actifs.
+- **Icônes** : Material Symbols Rounded, sous-ensemble limité aux icônes utilisées (24 Ko, disponible hors ligne), axes FILL, GRAD −25 en mode nuit pour compenser l'irradiation du clair sur noir, opsz selon la taille.
+- **Élévation** : tokens niveau 0 à 5 ; scrim à 32 %.
+- **Motion** : ressorts M3 convertis pour le web — spatial standard 350 / 500 / 750 ms, effets 150 / 200 / 300 ms sans rebond ; ressort expressif réservé à deux moments qui le méritent (la case cochée, la carte « Tout est dans le panier »). Mouvement réduit : tout devient fondu.
+
+### 10.4 Vérifications refaites
+
+Scénario complet automatisé (création, ajout, prix en deux devises, photo, réglages, cochage, liste terminée puis réutilisée, mode nuit, grand écran) : aucune erreur console, aucun défilement horizontal à 320, 360, 390 et 412 px.

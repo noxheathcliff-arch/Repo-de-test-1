@@ -1,6 +1,6 @@
 /* Trousse : cache hors ligne (stale-while-revalidate sur les fichiers du site) */
-var CACHE = 'trousse-v1';
-var SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'icon.svg', 'manifest.webmanifest'];
+var CACHE = 'trousse-v2';
+var SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'icon.svg', 'manifest.webmanifest', 'fonts/symbols-rounded.woff2'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));

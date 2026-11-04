@@ -17,6 +17,7 @@ Site web mobile first (Android d'abord) pour préparer l'achat de ses produits d
 | Chemin | Contenu |
 |---|---|
 | [`conception/architecture.md`](conception/architecture.md) | Cadrage, inventaire du contenu, architecture de l'information, Hooked, Lean UX, Laws of UX, direction visuelle 60-30-10, mouvement (12 principes de *The Illusion of Life*) |
+| [`conception/tokens-couleur.mjs`](conception/tokens-couleur.mjs) | Génération des rôles de couleur (Material Color Utilities) depuis la couleur source |
 | [`app/`](app/) | Le site : `index.html`, `styles.css`, `app.js`, manifeste, service worker. Aucune dépendance, aucune compilation. |
 
 ## Lancer en local
@@ -27,3 +28,7 @@ python3 -m http.server 8000
 ```
 
 Puis ouvrir `http://localhost:8000` (sur le téléphone : l'adresse IP de l'ordinateur sur le même Wi-Fi).
+
+## Tester en ligne
+
+Version déployée sur GitHub Pages : https://noxheathcliff-arch.github.io/Repo-de-test-1/
