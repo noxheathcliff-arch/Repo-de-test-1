@@ -1,0 +1,15 @@
+{
+  "name": "Trousse : liste hygiène et beauté",
+  "short_name": "Trousse",
+  "description": "Votre liste de produits d'hygiène et de cosmétiques, avec les prix et une estimation avant d'aller acheter.",
+  "lang": "fr",
+  "start_url": "./#/listes",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
