@@ -783,7 +783,7 @@
     var shown = used.concat(rated.filter(function (c) { return used.indexOf(c) < 0; }));
     var addable = CURRENCIES.filter(function (c) { return c[0] !== s.currency && shown.indexOf(c[0]) < 0; });
 
-    var out = '<div class="page"><header class="page-head"><h1 class="t-headline">Réglages</h1></header>';
+    var out = appbar({ flex: true, title: 'Réglages' }) + '<div class="page">';
 
     out += '<section class="section" aria-labelledby="set-theme"><h2 id="set-theme" class="section__title t-label">Apparence</h2><div class="section__body">' +
       '<div class="bgroup bgroup--flush" role="group" aria-label="Thème">' +
@@ -926,8 +926,14 @@
       '<button class="icon-btn" data-action="close-overlay" aria-label="Fermer">' + icon('close') + '</button></div>' +
       (o.head ? '<div class="sheet__extra">' + o.head() + '</div>' : '') +
       '<div class="sheet__body"></div>' + (o.foot ? '<div class="sheet__foot"></div>' : '') + '</div>';
-    root.appendChild(scrim);
-    root.appendChild(el);
+    // Un message sans action ne doit pas masquer la feuille qu'on ouvre
+    var sb = $('#snackbar');
+    if (sb.classList.contains('is-open') && !$('[data-snack]', sb)) { clearTimeout(snackTimer); hideSnack(false); }
+    var layer = document.createElement('div');
+    layer.className = 'sheet-layer';
+    layer.appendChild(scrim);
+    layer.appendChild(el);
+    root.appendChild(layer);
     var handle = $('.sheet__handle', el);
 
     var ov = {
@@ -955,7 +961,7 @@
         scrim.classList.remove('is-open');
         el.style.translate = '';
         el.classList.add('is-closing');
-        var done = function () { scrim.remove(); el.remove(); };
+        var done = function () { layer.remove(); };
         if (reducedMotion()) setTimeout(done, 160); else setTimeout(done, 360);
       }
     };
@@ -1027,6 +1033,7 @@
     }
     handle.addEventListener('pointerup', end);
     handle.addEventListener('pointercancel', end);
+    handle.addEventListener('lostpointercapture', end);
   }
 
   /* Dialogue de confirmation */

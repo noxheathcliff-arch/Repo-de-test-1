@@ -1,5 +1,5 @@
 /* Trousse : cache hors ligne (stale-while-revalidate sur les fichiers du site) */
-var CACHE = 'trousse-v2';
+var CACHE = 'trousse-v3';
 var SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'icon.svg', 'manifest.webmanifest', 'fonts/symbols-rounded.woff2'];
 
 self.addEventListener('install', function (e) {
