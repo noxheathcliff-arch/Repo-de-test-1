@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trousse</title>
+  <meta name="description" content="Votre liste de produits d'hygiène et de cosmétiques, avec les prix et une estimation avant d'aller acheter.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/symbols-rounded.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Applique le thème avant le premier rendu pour éviter un flash de couleur.
+    try {
+      var s = JSON.parse(localStorage.getItem('trousse:v1') || '{}');
+      var t = s.settings && s.settings.theme;
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+
+  <div class="shell">
+    <nav class="nav" aria-label="Navigation principale">
+      <a class="nav__item" href="#/listes" data-nav="listes">
+        <span class="nav__indicator"><span class="icon" aria-hidden="true">checklist</span></span>
+        <span class="nav__label">Listes</span>
+      </a>
+      <a class="nav__item" href="#/produits" data-nav="produits">
+        <span class="nav__indicator"><span class="icon" aria-hidden="true">health_and_beauty</span></span>
+        <span class="nav__label">Produits</span>
+      </a>
+      <a class="nav__item" href="#/reglages" data-nav="reglages">
+        <span class="nav__indicator"><span class="icon" aria-hidden="true">settings</span></span>
+        <span class="nav__label">Réglages</span>
+      </a>
+    </nav>
+
+    <main id="main" class="main" tabindex="-1">
+      <noscript><p class="empty">Trousse a besoin de JavaScript pour fonctionner.</p></noscript>
+    </main>
+  </div>
+
+  <div id="overlay-root"></div>
+  <div id="snackbar" class="snackbar" role="status" aria-live="polite"></div>
+  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
