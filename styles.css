@@ -858,21 +858,28 @@ details.archive[open] > summary .icon { transform: rotate(90deg); }
 .scrim { position: fixed; inset: 0; z-index: 40; background: var(--c-scrim); opacity: 0; transition: opacity var(--m-effects-slow); }
 .scrim.is-open { opacity: .32; }
 
-/* ---------- Bottom sheet modale : ≤ 50 % puis plein écran ---------- */
+/* ---------- Bottom sheet modale : ≤ 50 % puis plein écran ----------
+   La feuille vit dans un calque plein écran (le même repère que le scrim) :
+   sa hauteur et son bas se calculent sur ce calque, pas sur bottom:0 + dvh,
+   qui divergent dans Chrome Android quand la barre du navigateur bouge. */
+.sheet-layer {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+}
+.sheet-layer > .scrim { position: absolute; z-index: 0; }
 .sheet {
-  position: fixed; z-index: 41; left: 0; right: 0; bottom: 0;
+  position: relative; z-index: 1; width: 100%;
   display: flex; flex-direction: column;
-  max-height: 50vh; max-height: 50dvh;
+  max-height: 50%; min-height: 0;
   border-radius: var(--shape-xl) var(--shape-xl) 0 0;
   background: var(--c-surface-container-low); color: var(--c-on-surface);
   box-shadow: var(--elev-1);
   transform: translateY(100%);
   transition: transform var(--m-spatial-default), max-height var(--m-spatial-default), min-height var(--m-spatial-default);
-  min-height: 0;
   padding-bottom: env(safe-area-inset-bottom); outline: none;
 }
 .sheet.is-open { transform: translateY(0); }
-.sheet.is-expanded { max-height: calc(100vh - 72px); max-height: calc(100dvh - 72px); min-height: calc(100vh - 72px); min-height: calc(100dvh - 72px); }
+.sheet.is-expanded { max-height: calc(100% - 72px); min-height: calc(100% - 72px); }
 .sheet.is-closing { transition: transform var(--m-spatial-fast); transform: translateY(100%); }
 .sheet__handle {
   display: grid; place-items: center; width: 100%; height: 48px; flex: none; margin-bottom: -12px;
@@ -892,15 +899,14 @@ details.archive[open] > summary .icon { transform: rotate(90deg); }
 .sheet .search { margin: 0 var(--space-300) var(--space-100); }
 .sheet .search:focus-within { margin-inline: var(--space-150); }
 @media (min-width: 640px) {
-  .sheet { left: 50%; right: auto; width: min(640px, calc(100vw - 112px)); transform: translate(-50%, 100%); }
-  .sheet.is-open { transform: translate(-50%, 0); }
-  .sheet.is-closing { transform: translate(-50%, 100%); }
-  .sheet.is-expanded { max-height: calc(100dvh - 56px); min-height: calc(100dvh - 56px); }
+  .sheet { width: min(640px, calc(100% - 112px)); }
+  .sheet.is-expanded { max-height: calc(100% - 56px); min-height: calc(100% - 56px); }
 }
 /* Expanded et plus : la feuille devient une modal side sheet */
 @media (min-width: 840px) {
+  .sheet-layer { align-items: flex-end; justify-content: stretch; }
   .sheet, .sheet.is-expanded {
-    left: auto; right: 0; top: 0; bottom: 0; width: min(400px, 100vw); max-height: none; min-height: 0; height: 100dvh;
+    width: min(400px, 100%); flex: 1; max-height: none; min-height: 0;
     border-radius: var(--shape-lg) 0 0 var(--shape-lg); transform: translateX(100%);
   }
   .sheet.is-open { transform: translateX(0); }
@@ -1017,7 +1023,6 @@ body.is-form .main, body.is-form.is-detail .main { padding-bottom: 0; }
   .sheet, .sheet.is-open, .sheet.is-closing { transform: none; opacity: 0; transition: opacity var(--m-effects-default); }
   .sheet.is-open { opacity: 1; }
   .sheet.is-closing { opacity: 0; }
-  @media (min-width: 640px) and (max-width: 839px) { .sheet, .sheet.is-open, .sheet.is-closing { transform: translateX(-50%); } }
   .menu { transform: none; }
   .snackbar { transform: none; clip-path: none; }
   .btn:active, .bgroup__btn:active, .icon-btn--tonal:active::before { border-radius: inherit; }
